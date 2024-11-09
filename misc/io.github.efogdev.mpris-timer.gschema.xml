@@ -25,6 +25,10 @@
 			<default>false</default>
 		</key>
 
+		<key name="remember-window-size" type="b">
+			<default>false</default>
+		</key>
+
 		<key name="presets" type="as">
 			<default>[ '00:30', '01:00', '01:30', '02:00', '02:30', '03:00', '05:00', '07:00', '10:00', '15:00', '20:00', '30:00' ]</default>
 		</key>
@@ -47,6 +51,14 @@
 
 		<key name="volume" type="d">
 			<default>1</default>
+		</key>
+
+		<key name="window-width" type="u">
+			<default>550</default>
+		</key>
+
+		<key name="window-height" type="u">
+			<default>210</default>
 		</key>
 		
 	</schema>

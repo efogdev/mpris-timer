@@ -27,7 +27,7 @@ func LoadFlags() {
 	flag.IntVar(&Overrides.Duration, "start", 0, "Start the timer immediately, don't show UI")
 	flag.StringVar(&Overrides.Title, "title", UserPrefs.DefaultTitle, "Name/title of the timer")
 	flag.StringVar(&Overrides.Text, "text", UserPrefs.DefaultText, "Notification text")
-	flag.StringVar(&Overrides.Color, "color", UserPrefs.ProgressColor, "Progress color for the player, use \"default\" for the GTK accent color")
+	flag.StringVar(&Overrides.Color, "color", UserPrefs.ProgressColor, "Progress color (#HEX) for the player, use \"default\" for the GTK accent color")
 	flag.Parse()
 
 	if Overrides.Color == "default" {

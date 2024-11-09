@@ -100,7 +100,7 @@ func setupTimeEntry(entry *gtk.Entry, prev *gtk.Widget, next *gtk.Widget, maxVal
 			},
 			{
 				// space = focus next
-				keyval: []uint{gdk.KEY_space, gdk.KEY_KP_Space},
+				keyval: util.KeySpace.GdkKeyvals(),
 				mask:   gdk.NoModifierMask,
 				fn: func() bool {
 					formatValue()
@@ -110,7 +110,7 @@ func setupTimeEntry(entry *gtk.Entry, prev *gtk.Widget, next *gtk.Widget, maxVal
 			},
 			{
 				// enter = start timer
-				keyval: []uint{gdk.KEY_Return, gdk.KEY_KP_Enter, gdk.KEY_ISO_Enter, gdk.KEY_3270_Enter, gdk.KEY_RockerEnter},
+				keyval: util.KeyEnter.GdkKeyvals(),
 				mask:   gdk.NoModifierMask,
 				fn: func() bool {
 					if finish == nil {
@@ -124,7 +124,7 @@ func setupTimeEntry(entry *gtk.Entry, prev *gtk.Widget, next *gtk.Widget, maxVal
 			},
 			{
 				// left = focus prev
-				keyval: []uint{gdk.KEY_Left},
+				keyval: util.KeyLeft.GdkKeyvals(),
 				mask:   gdk.NoModifierMask,
 				fn: func() bool {
 					if prev == nil {
@@ -143,7 +143,7 @@ func setupTimeEntry(entry *gtk.Entry, prev *gtk.Widget, next *gtk.Widget, maxVal
 			},
 			{
 				// right = focus next
-				keyval: []uint{gdk.KEY_Right},
+				keyval: util.KeyRight.GdkKeyvals(),
 				mask:   gdk.NoModifierMask,
 				fn: func() bool {
 					_, _, selection := entry.SelectionBounds()

@@ -22,10 +22,9 @@ github.com/diamondburned/gotk4/pkg/graphene
 github.com/diamondburned/gotk4/pkg/gsk/v4
 github.com/diamondburned/gotk4/pkg/gtk/v4
 github.com/diamondburned/gotk4/pkg/pango
-# github.com/ebitengine/purego v0.4.1
+# github.com/ebitengine/purego v0.8.1
 ## explicit; go 1.18
 github.com/ebitengine/purego
-github.com/ebitengine/purego/internal/abi
 github.com/ebitengine/purego/internal/cgo
 github.com/ebitengine/purego/internal/fakecgo
 github.com/ebitengine/purego/internal/strings
@@ -58,10 +57,9 @@ github.com/hajimehoshi/oto/v2/internal/oboe
 # go4.org/unsafe/assume-no-moving-gc v0.0.0-20231121144256-b99613f794b6
 ## explicit; go 1.11
 go4.org/unsafe/assume-no-moving-gc
-# golang.org/x/sync v0.8.0
+# golang.org/x/sync v0.9.0
 ## explicit; go 1.18
 golang.org/x/sync/singleflight
-# golang.org/x/sys v0.7.0
-## explicit; go 1.17
-golang.org/x/sys/internal/unsafeheader
+# golang.org/x/sys v0.27.0
+## explicit; go 1.18
 golang.org/x/sys/windows

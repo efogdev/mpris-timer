@@ -31,7 +31,7 @@ func NewPrefsWindow() {
 	escCtrl := gtk.NewEventControllerKey()
 	escCtrl.SetPropagationPhase(gtk.PhaseCapture)
 	escCtrl.ConnectKeyPressed(func(keyval, keycode uint, state gdk.ModifierType) (ok bool) {
-		if keyval == gdk.KEY_Escape {
+		if slices.Contains(util.KeyEsc.GdkKeyvals(), keyval) {
 			prefsWin.Close()
 			return true
 		}
@@ -185,6 +185,13 @@ func PopulatePresetsGroup(group *adw.PreferencesGroup) {
 	defaultPresetSelect := adw.NewComboRow()
 	activatePresetSwitch := adw.NewSwitchRow()
 
+	winSizeSwitch := adw.NewSwitchRow()
+	winSizeSwitch.SetTitle("Remember window size")
+	winSizeSwitch.SetActive(util.UserPrefs.RememberWindowSize)
+	winSizeSwitch.Connect("notify::active", func() {
+		util.SetRememberWindowSize(winSizeSwitch.Active())
+	})
+
 	presetsOnRightSwitch = adw.NewSwitchRow()
 	presetsOnRightSwitch.SetTitle("Presets on right side")
 	presetsOnRightSwitch.SetSubtitle("Requires restart")
@@ -249,6 +256,7 @@ func PopulatePresetsGroup(group *adw.PreferencesGroup) {
 	footer.SetHAlign(gtk.AlignCenter)
 	footer.Append(newPresetBtn)
 
+	group.Add(winSizeSwitch)
 	group.Add(showPresetsSwitch)
 	group.Add(presetsOnRightSwitch)
 	group.Add(defaultPresetSelect)
@@ -286,18 +294,15 @@ func RenderPresets(toAdd []string) {
 			title.SetText("00:01")
 		}
 
-		focusCtrl := gtk.NewEventControllerFocus()
-		title.AddController(focusCtrl)
-
-		focusCtrl.ConnectLeave(func() {
-			octets := strings.Split(title.Text(), ":")
-			if len(octets) < 1 && len(octets) > 3 {
+		formatTitle := func() {
+			parts := strings.Split(title.Text(), ":")
+			if len(parts) < 1 && len(parts) > 3 {
 				cleanTitle()
 				return
 			}
 
 			var vals []int
-			for _, v := range octets {
+			for _, v := range parts {
 				val, err := strconv.Atoi(v)
 				if err != nil || val < 0 || val > 59 {
 					cleanTitle()
@@ -333,8 +338,23 @@ func RenderPresets(toAdd []string) {
 
 			title.SetText(newText)
 			util.SetPresets(presets)
-			prefsWin.GrabFocus()
+		}
+
+		focusCtrl := gtk.NewEventControllerFocus()
+		focusCtrl.ConnectLeave(formatTitle)
+		title.AddController(focusCtrl)
+
+		keyCtrl := gtk.NewEventControllerKey()
+		keyCtrl.SetPropagationPhase(gtk.PhaseCapture)
+		keyCtrl.ConnectKeyPressed(func(keyval, keycode uint, state gdk.ModifierType) (ok bool) {
+			if slices.Contains(util.KeyEnter.GdkKeyvals(), keyval) {
+				formatTitle()
+			}
+
+			return false
 		})
+
+		title.AddController(keyCtrl)
 
 		btnContent := adw.NewButtonContent()
 		btnContent.SetHExpand(false)

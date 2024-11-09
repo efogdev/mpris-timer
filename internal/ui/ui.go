@@ -8,6 +8,7 @@ import (
 	"log"
 	"mpris-timer/internal/util"
 	"os"
+	"slices"
 )
 
 //go:embed style.css
@@ -17,8 +18,6 @@ const (
 	minWidth      = 400
 	minHeight     = 210
 	collapseWidth = 500
-	defaultWidth  = 550
-	defaultHeight = 210
 )
 
 var (
@@ -60,10 +59,11 @@ func NewTimePicker(app *adw.Application) {
 	escCtrl := gtk.NewEventControllerKey()
 	escCtrl.SetPropagationPhase(gtk.PhaseCapture)
 	escCtrl.ConnectKeyPressed(func(keyval, keycode uint, state gdk.ModifierType) (ok bool) {
-		if keyval != gdk.KEY_Escape {
+		if !slices.Contains(util.KeyEsc.GdkKeyvals(), keyval) {
 			return false
 		}
 
+		saveSize()
 		win.Close()
 		os.Exit(0)
 		return true
@@ -73,7 +73,12 @@ func NewTimePicker(app *adw.Application) {
 	win.SetContent(handle)
 	win.SetTitle("MPRIS Timer")
 	win.SetSizeRequest(minWidth, minHeight)
-	win.SetDefaultSize(defaultWidth, defaultHeight)
+	win.SetDefaultSize(int(util.UserPrefs.WindowWidth), int(util.UserPrefs.WindowHeight))
+
+	win.ConnectCloseRequest(func() (ok bool) {
+		saveSize()
+		return false
+	})
 
 	bp := adw.NewBreakpoint(adw.NewBreakpointConditionLength(adw.BreakpointConditionMaxWidth, collapseWidth, adw.LengthUnitSp))
 	bp.AddSetter(body, "collapsed", true)
@@ -139,7 +144,7 @@ func NewSidebar() *adw.NavigationPage {
 				return
 			}
 
-			hrsLabel.SetText(util.NumToLabelText(0))
+			hrsLabel.SetText(util.NumToLabelText(time.Hour()))
 			minLabel.SetText(util.NumToLabelText(time.Minute()))
 			secLabel.SetText(util.NumToLabelText(time.Second()))
 			startBtn.SetCanFocus(true)
@@ -163,12 +168,12 @@ func NewSidebar() *adw.NavigationPage {
 		keyCtrl := gtk.NewEventControllerKey()
 		keyCtrl.SetPropagationPhase(gtk.PhaseCapture)
 		keyCtrl.ConnectKeyPressed(func(keyval, keycode uint, state gdk.ModifierType) (ok bool) {
-			if keyval == gdk.KEY_Left && state == gdk.NoModifierMask && idx%2 == 0 && util.UserPrefs.PresetsOnRight {
+			if slices.Contains(util.KeyLeft.GdkKeyvals(), keyval) && state == gdk.NoModifierMask && idx%2 == 0 && util.UserPrefs.PresetsOnRight {
 				secLabel.GrabFocus()
 				return true
 			}
 
-			if keyval == gdk.KEY_Right && state == gdk.NoModifierMask && idx%2 == 1 && !util.UserPrefs.PresetsOnRight {
+			if slices.Contains(util.KeyRight.GdkKeyvals(), keyval) && state == gdk.NoModifierMask && idx%2 == 1 && !util.UserPrefs.PresetsOnRight {
 				minLabel.GrabFocus()
 				return true
 			}
@@ -263,6 +268,7 @@ func NewContent() *adw.NavigationPage {
 		seconds := time.Hour()*60*60 + time.Minute()*60 + time.Second()
 		if seconds > 0 {
 			util.Overrides.Duration = seconds
+			saveSize()
 			win.Close()
 			return
 		}
@@ -273,7 +279,7 @@ func NewContent() *adw.NavigationPage {
 	leftKeyCtrl := gtk.NewEventControllerKey()
 	leftKeyCtrl.SetPropagationPhase(gtk.PhaseCapture)
 	leftKeyCtrl.ConnectKeyPressed(func(keyval, keycode uint, state gdk.ModifierType) (ok bool) {
-		if keyval == gdk.KEY_Left && state == gdk.NoModifierMask {
+		if slices.Contains(util.KeyLeft.GdkKeyvals(), keyval) && state == gdk.NoModifierMask {
 			secLabel.GrabFocus()
 			return true
 		}
@@ -311,4 +317,10 @@ func NewContent() *adw.NavigationPage {
 	vBox.Append(footer)
 
 	return content
+}
+
+func saveSize() {
+	if util.UserPrefs.RememberWindowSize {
+		util.SetWindowSize(uint(win.Width()), uint(win.Height()))
+	}
 }

@@ -2,12 +2,27 @@
 <component type="desktop-application">
 	<id>io.github.efogdev.mpris-timer</id>
 	<url type="homepage">https://github.com/efogdev/mpris-timer</url>
+
+	<branding>
+		<color type="primary" scheme_preference="light">#f2a6da</color>
+		<color type="primary" scheme_preference="dark">#6f3380</color>
+	</branding>
 	
 	<name>MPRIS Timer</name>
 	<summary>Timer app with seamless GNOME integration</summary>
 	<content_rating type="oars-1.1" />
 	<releases>
-		<release date="2024-11-09" version="v0.32">RC v0.32.</release>
+		<release date="2024-11-10" version="0.32">
+			<description>
+				<p>RC 0.32</p>
+				<ul>
+					<li>Fixed three-part presets</li>
+					<li>Fixed presets editing difficulties (i.e. Enter key)</li>
+					<li>New "remember window size" option</li>
+				</ul>
+			</description>	
+		</release>
+		
 		<release date="2024-11-08" version="v0.21">Beta v0.25.</release>
 		<release date="2024-11-06" version="v0.21">Alpha v0.21.</release>
 		<release date="2024-11-04" version="v0.11">pre-Alpha v0.11.</release>
@@ -26,14 +41,14 @@
 
 	<description>
 		<p>
-			A timer app (CLI/GUI) with seamless GNOME integration accomplished by pretending to be a media player.
+			Timers never felt so native before! 
 			Ultimately, serves the only purpose — to start a timer quickly and efficiently.
+			GNOME integration is accomplished by pretending to be a media player.
 			Notifications included! Utilizing GTK4, Adwaita and MPRIS interface.
 		</p>
 		<p>
-			MPRIS Timer is keyboard friendly! It should be quite intuitive. 
-			Use navigation (arrows, space, tab, shift+tab) or start inputting numbers right away. 
-			Use either as a GUI app or as a CLI tool: see `mpris-timer -help`.
+			MPRIS Timer aims to be as keyboard friendly as possible. 
+			Use navigation keys (arrows, tab, shift+tab, space, enter) or start inputting numbers right away.
 		</p>
 	</description>
 

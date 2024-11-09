@@ -20,6 +20,9 @@ type Prefs struct {
 	DefaultTitle       string
 	DefaultText        string
 	ActivatePreset     bool
+	RememberWindowSize bool
+	WindowWidth        uint
+	WindowHeight       uint
 
 	// ToDo
 	CachePrefix string
@@ -48,6 +51,9 @@ func LoadPrefs() {
 		DefaultText:        settings.String("default-text"),
 		CachePrefix:        settings.String("cache-prefix"),
 		ActivatePreset:     settings.Boolean("activate-preset"),
+		RememberWindowSize: settings.Boolean("remember-window-size"),
+		WindowWidth:        settings.Uint("window-width"),
+		WindowHeight:       settings.Uint("window-height"),
 	}
 }
 
@@ -97,6 +103,11 @@ func SetActivatePreset(value bool) {
 	settings.SetBoolean("activate-preset", value)
 }
 
+func SetRememberWindowSize(value bool) {
+	UserPrefs.RememberWindowSize = value
+	settings.SetBoolean("remember-window-size", value)
+}
+
 func SetProgressColor(value string) {
 	if !regexp.MustCompile(`^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$`).MatchString(value) {
 		return
@@ -133,4 +144,11 @@ func SetVolume(value float64) {
 	Overrides.Volume = value
 	UserPrefs.Volume = value
 	settings.SetDouble("volume", value)
+}
+
+func SetWindowSize(width uint, height uint) {
+	UserPrefs.WindowWidth = width
+	UserPrefs.WindowHeight = height
+	settings.SetUint("window-width", width)
+	settings.SetUint("window-height", height)
 }
