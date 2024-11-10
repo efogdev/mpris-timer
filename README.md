@@ -13,7 +13,7 @@ Notifications included! Utilizing GTK4, Adwaita and MPRIS interface.
 ## Installation
 
 ```shell
-flatpak install --user flathub io.github.efogdev.mpris-timer
+flatpak install flathub io.github.efogdev.mpris-timer
 ```
 
 ## Preview
@@ -24,24 +24,24 @@ flatpak install --user flathub io.github.efogdev.mpris-timer
 
 ```text
 Usage of mpris-timer:
-  -color string
-    	Progress color for the player, use "default" for the GTK accent color (default "default")
-  -notify
-    	Send desktop notification (default true)
-  -silence int
-    	Play this milliseconds of silence before the actual sound — might be helpful for audio devices that wake up not immediately
-  -sound
-    	Play sound (default true)
-  -start int
-    	Start the timer immediately, don't show UI
-  -text string
-    	Notification text (default "Time is up!")
-  -title string
-    	Name/title of the timer (default "Timer")
   -ui
-    	Show timepicker UI (default true)
+      Show timepicker UI (default true)
+  -notify
+      Send desktop notification (default true)
+	-color string
+      Progress color (#HEX) for the player, use "default" for the GTK accent color (default "default")
+  -sound
+      Play sound (default true)
+  -start int
+      Start the timer immediately, don't show UI
   -volume float
-    	Volume [0-1] (default 1)
+      Volume [0-1] (default 1)
+  -text string
+      Notification text (default "Time is up!")
+  -title string
+      Name/title of the timer (default "Timer")
+  -silence int
+      Play this milliseconds of silence before the actual sound — might be helpful for audio devices that wake up not immediately
 ```
 
 ## Development
@@ -54,7 +54,7 @@ go run cmd/main.go -help
 
 Build:
 ```shell
-go build -tags native,wayland -ldflags="-s -w" -o ./.bin/app ./cmd/main.go
+go build -pgo default.pgo -tags native,wayland -ldflags="-s -w" -o ./.bin/app ./cmd/main.go
 ```
 
 Flatpak:

@@ -9,9 +9,20 @@
 	</branding>
 	
 	<name>MPRIS Timer</name>
-	<summary>Timer app with seamless GNOME integration</summary>
+	<summary>Native-feeling timers for GNOME</summary>
 	<content_rating type="oars-1.1" />
 	<releases>
+		<release date="2024-11-10" version="v0.34">
+			<description>
+				<p>v0.34: bugfixes and performance improvements</p>
+				<ul>
+					<li>Fixed a bug in presets keyboard navigation</li>
+					<li>Added PGO for performance optimization</li>
+					<li>Better caching mechanism</li>
+				</ul>
+			</description>
+		</release>
+
 		<release date="2024-11-10" version="v0.32">
 			<description>
 				<p>RC 0.32</p>
@@ -41,9 +52,8 @@
 
 	<description>
 		<p>
-			Timers never felt so native before! 
+			Timer app with seamless GNOME integration accomplished by pretending to be a media player.
 			Ultimately, serves the only purpose — to start a timer quickly and efficiently.
-			GNOME integration is accomplished by pretending to be a media player.
 			Notifications included! Utilizing GTK4, Adwaita and MPRIS interface.
 		</p>
 		<p>
@@ -55,12 +65,12 @@
 	<launchable type="desktop-id">io.github.efogdev.mpris-timer.desktop</launchable>
 	<screenshots>
 		<screenshot type="default">
-			<caption>Main window</caption>
+			<caption>The app</caption>
 			<image>https://github.com/user-attachments/assets/3a6f6eb8-8e5f-4c16-a801-6e346bd4d100</image>
 		</screenshot>
 		<screenshot>
-			<caption>Workflow demo</caption>
-			<image>https://github.com/user-attachments/assets/7be07479-85bb-44b1-9f6f-0fc85190c89e</image>
+			<caption>Active timers</caption>
+			<image>https://github.com/user-attachments/assets/b10b592a-9c42-4e59-8602-59044cf402e7</image>
 		</screenshot>
 		<screenshot>
 			<caption>Preferences</caption>

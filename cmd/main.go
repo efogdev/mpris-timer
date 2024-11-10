@@ -8,6 +8,8 @@ import (
 	"mpris-timer/internal/util"
 	"os"
 	"os/signal"
+	"runtime/pprof"
+	"slices"
 	"sync"
 )
 
@@ -17,6 +19,20 @@ func main() {
 	util.RegisterApp(ctx)
 	util.LoadPrefs()
 	util.LoadFlags()
+	util.InitCache()
+
+	// no flag so it doesn't appear in the help
+	if slices.Contains(os.Args, "profile") {
+		f, err := os.Create("default.pgo")
+		if err != nil {
+			log.Fatal("could not create CPU profile: ", err)
+		}
+		defer f.Close()
+		if err = pprof.StartCPUProfile(f); err != nil {
+			log.Fatal("could not start CPU profile: ", err)
+		}
+		defer pprof.StopCPUProfile()
+	}
 
 	if util.Overrides.UseUI && util.Overrides.Duration > 0 {
 		log.Fatalf("UI can't be used with -start")

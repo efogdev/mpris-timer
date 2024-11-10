@@ -27,6 +27,7 @@ var (
 	hrsLabel      *gtk.Entry
 	minLabel      *gtk.Entry
 	secLabel      *gtk.Entry
+	flowBox       *gtk.FlowBox
 )
 
 func Init() {
@@ -121,7 +122,7 @@ func NewTimePicker(app *adw.Application) {
 
 func NewSidebar() *adw.NavigationPage {
 	sidebar := adw.NewNavigationPage(gtk.NewBox(gtk.OrientationVertical, 0), "Presets")
-	flowBox := gtk.NewFlowBox()
+	flowBox = gtk.NewFlowBox()
 
 	flowBox.SetSelectionMode(gtk.SelectionBrowse)
 	flowBox.SetVAlign(gtk.AlignCenter)
@@ -168,12 +169,19 @@ func NewSidebar() *adw.NavigationPage {
 		keyCtrl := gtk.NewEventControllerKey()
 		keyCtrl.SetPropagationPhase(gtk.PhaseCapture)
 		keyCtrl.ConnectKeyPressed(func(keyval, keycode uint, state gdk.ModifierType) (ok bool) {
-			if slices.Contains(util.KeyLeft.GdkKeyvals(), keyval) && state == gdk.NoModifierMask && idx%2 == 0 && util.UserPrefs.PresetsOnRight {
+			if state != gdk.NoModifierMask {
+				return false
+			}
+
+			// I don't like this solution but idk how to do it better
+			x, _, w, _, _ := child.Bounds()
+
+			if slices.Contains(util.KeyLeft.GdkKeyvals(), keyval) && x == 0 && util.UserPrefs.PresetsOnRight {
 				secLabel.GrabFocus()
 				return true
 			}
 
-			if slices.Contains(util.KeyRight.GdkKeyvals(), keyval) && state == gdk.NoModifierMask && idx%2 == 1 && !util.UserPrefs.PresetsOnRight {
+			if slices.Contains(util.KeyRight.GdkKeyvals(), keyval) && (x+w == flowBox.Width()) && !util.UserPrefs.PresetsOnRight {
 				minLabel.GrabFocus()
 				return true
 			}
@@ -234,6 +242,24 @@ func NewContent() *adw.NavigationPage {
 	setupTimeEntry(hrsLabel, nil, &minLabel.Widget, 23, finish)
 	setupTimeEntry(minLabel, &hrsLabel.Widget, &secLabel.Widget, 59, finish)
 	setupTimeEntry(secLabel, &minLabel.Widget, &startBtn.Widget, 59, finish)
+
+	hrsLeftCtrl := gtk.NewEventControllerKey()
+	hrsLeftCtrl.SetPropagationPhase(gtk.PhaseCapture)
+	hrsLeftCtrl.ConnectKeyPressed(func(keyval, keycode uint, state gdk.ModifierType) (ok bool) {
+		selected := flowBox.SelectedChildren()
+
+		if len(selected) != 1 {
+			return false
+		}
+
+		if !util.UserPrefs.PresetsOnRight && slices.Contains(util.KeyLeft.GdkKeyvals(), keyval) {
+			selected[0].GrabFocus()
+		}
+
+		return false
+	})
+
+	hrsLabel.AddController(hrsLeftCtrl)
 
 	scLabel1 := gtk.NewLabel(":")
 	scLabel1.AddCSSClass("semicolon")
