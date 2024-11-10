@@ -28,7 +28,7 @@ Usage of mpris-timer:
       Show timepicker UI (default true)
   -notify
       Send desktop notification (default true)
-	-color string
+  -color string
       Progress color (#HEX) for the player, use "default" for the GTK accent color (default "default")
   -sound
       Play sound (default true)
