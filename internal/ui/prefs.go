@@ -108,7 +108,7 @@ func PopulateTimerGroup(group *adw.PreferencesGroup) {
 	volumePreviewCtrl := gtk.NewGestureClick()
 	volumePreviewCtrl.SetPropagationPhase(gtk.PhaseCapture)
 	volumePreviewCtrl.ConnectReleased(func(_ int, _ float64, _ float64) {
-		go util.PlaySound()
+		go func() { _ = util.PlaySound() }()
 	})
 
 	volumeRow.SetTitle("Sound volume")
