@@ -4,8 +4,8 @@
 	<url type="homepage">https://github.com/efogdev/mpris-timer</url>
 
 	<branding>
-		<color type="primary" scheme_preference="light">#f2a6da</color>
-		<color type="primary" scheme_preference="dark">#6f3380</color>
+		<color type="primary" scheme_preference="light">#dbf8ff</color>
+		<color type="primary" scheme_preference="dark">#194894</color>
 	</branding>
 	
 	<name>MPRIS Timer</name>
