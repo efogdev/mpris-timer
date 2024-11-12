@@ -12,7 +12,7 @@ import (
 //go:embed res/ding.mp3
 var sound []byte
 
-func PlaySound() error {
+func PlaySound(isDemoRun bool) error {
 	dec, err := mp3.NewDecoder(bytes.NewReader(sound))
 	if err != nil {
 		return err
@@ -24,7 +24,7 @@ func PlaySound() error {
 	}
 	<-ready
 
-	if Overrides.Silence != 0 {
+	if Overrides.Silence != 0 && !isDemoRun {
 		log.Printf("silence requested")
 		playSilence(Overrides.Silence)
 	}
