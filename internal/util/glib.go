@@ -4,16 +4,19 @@ import (
 	"context"
 	"github.com/diamondburned/gotk4/pkg/gio/v2"
 	"github.com/efogdev/gotk4-adwaita/pkg/adw"
-	"log"
 )
 
 var App *adw.Application
 
-// RegisterApp must be called before init
-func RegisterApp(ctx context.Context) {
+// RegisterApp must be called before UI init
+func RegisterApp(ctx context.Context) chan struct{} {
+	done := make(chan struct{})
 	App = adw.NewApplication(AppId, gio.ApplicationNonUnique)
-	err := App.Register(ctx)
-	if err != nil {
-		log.Printf("error registering application: %v", err)
-	}
+
+	go func() {
+		_ = App.Register(ctx)
+		done <- struct{}{}
+	}()
+
+	return done
 }

@@ -7,14 +7,17 @@ import (
 	"os"
 	"path"
 	"path/filepath"
-	"slices"
 	"strings"
+	"sync"
 	"text/template"
 )
 
 var (
-	tpl      = template.New("svg")
-	cacheMap []string
+	tpl = template.New("svg")
+
+	cacheLoaded bool
+	cacheMu     sync.RWMutex
+	cache       = make(map[string]struct{})
 )
 
 func InitCache() {
@@ -24,7 +27,7 @@ func InitCache() {
 		}
 
 		if !info.IsDir() && filepath.Ext(info.Name()) == ".svg" {
-			cacheMap = append(cacheMap, path)
+			cache[path] = struct{}{}
 		}
 
 		return nil
@@ -34,15 +37,25 @@ func InitCache() {
 		fmt.Printf("checking cache dir: %v\n", err)
 		return
 	}
+
+	cacheMu.Lock()
+	cacheLoaded = true
+	cacheMu.Unlock()
 }
 
 func MakeProgressCircle(progress float64) (string, error) {
 	progress = math.Max(0, math.Min(100, progress))
 	filename := path.Join(CacheDir, fmt.Sprintf("%s.%.2f.svg", strings.Replace(Overrides.Color, "#", "", 1), progress))
 
-	if slices.Contains(cacheMap, filename) {
-		return filename, nil
+	cacheMu.RLock()
+	if cacheLoaded {
+		_, exists := cache[filename]
+		if exists {
+			cacheMu.RUnlock()
+			return filename, nil
+		}
 	}
+	cacheMu.RUnlock()
 
 	if _, err := os.Stat(filename); err == nil {
 		return filename, nil
@@ -82,7 +95,7 @@ func MakeProgressCircle(progress float64) (string, error) {
 
 	err = os.WriteFile(filename, svgBuffer.Bytes(), 0644)
 	if err != nil {
-		return "", fmt.Errorf("failed to write SVG file: %w", err)
+		return "", fmt.Errorf("write SVG: %w", err)
 	}
 
 	return filename, nil

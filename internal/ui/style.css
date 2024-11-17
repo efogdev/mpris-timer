@@ -48,6 +48,16 @@
 	padding: 12px 8px;
 }
 
+/* huh? */
+.presets-list-title > * > * {
+	background: transparent;
+}
+
+/* cmon go find the classname */
+.presets-list > * {
+	padding: 0;
+}
+
 .list-btn {
 	background: transparent;
 }

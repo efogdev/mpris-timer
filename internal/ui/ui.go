@@ -16,8 +16,8 @@ var cssString string
 
 const (
 	minWidth      = 400
-	minHeight     = 210
-	collapseWidth = 500
+	minHeight     = 160
+	collapseWidth = 520
 )
 
 var (
@@ -72,7 +72,7 @@ func NewTimePicker(app *adw.Application) {
 
 	win.AddController(escCtrl)
 	win.SetContent(handle)
-	win.SetTitle("MPRIS Timer")
+	win.SetTitle(util.AppName)
 	win.SetSizeRequest(minWidth, minHeight)
 	win.SetDefaultSize(int(util.UserPrefs.WindowWidth), int(util.UserPrefs.WindowHeight))
 
@@ -153,7 +153,7 @@ func NewSidebar() *adw.NavigationPage {
 		}
 
 		mouseCtrl := gtk.NewGestureClick()
-		mouseCtrl.ConnectPressed(func(nPress int, x, y float64) {
+		mouseCtrl.ConnectReleased(func(nPress int, x, y float64) {
 			onActivate()
 		})
 

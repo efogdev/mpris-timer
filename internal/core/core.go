@@ -16,6 +16,11 @@ const (
 	baseInterval = time.Second / baseFPS
 )
 
+type PropsChangedEvent struct {
+	iface string
+	props map[string]dbus.Variant
+}
+
 type TimerPlayer struct {
 	Done           chan struct{}
 	Name           string
@@ -28,6 +33,7 @@ type TimerPlayer struct {
 	pausedAt       time.Time
 	pausedFor      time.Duration
 	tickerDone     chan struct{}
+	emitter        chan PropsChangedEvent
 	playbackStatus string
 }
 
@@ -42,17 +48,16 @@ func NewTimerPlayer(seconds int, name string) (*TimerPlayer, error) {
 		objectPath:     "/org/mpris/MediaPlayer2",
 		playbackStatus: "Playing",
 		tickerDone:     make(chan struct{}),
+		emitter:        make(chan PropsChangedEvent),
 		Done:           make(chan struct{}, 1),
 	}, nil
 }
 
 func (p *TimerPlayer) Start() error {
 	id := strconv.Itoa(int(time.Now().UnixMicro()))[8:]
-	log.Printf("timer %v: start", id)
-
 	conn, err := dbus.SessionBus()
 	if err != nil {
-		return fmt.Errorf("failed to connect to session bus: %w", err)
+		return fmt.Errorf("connect to session bus: %w", err)
 	}
 
 	p.conn = conn
@@ -60,25 +65,23 @@ func (p *TimerPlayer) Start() error {
 
 	reply, err := conn.RequestName(p.serviceName, dbus.NameFlagAllowReplacement)
 	if err != nil || reply != dbus.RequestNameReplyPrimaryOwner {
-		return fmt.Errorf("could not request bus: %v", err)
-	}
-
-	if p.serviceName == "" {
-		return fmt.Errorf("could not find free service name")
+		return fmt.Errorf("request bus: %v", err)
 	}
 
 	if err = p.exportInterfaces(); err != nil {
-		return fmt.Errorf("failed to export interfaces: %w", err)
+		return fmt.Errorf("export interfaces: %w", err)
 	}
 
 	p.startTime = time.Now()
 	go p.tick()
+	go p.emit()
 
 	return nil
 }
 
 func (p *TimerPlayer) Destroy() {
 	_ = p.conn.Close()
+	close(p.emitter)
 	close(p.Done)
 }
 
@@ -96,6 +99,12 @@ func (p *TimerPlayer) exportInterfaces() error {
 	}
 
 	return nil
+}
+
+func (p *TimerPlayer) emit() {
+	for payload := range p.emitter {
+		p.emitPropertiesChanged(payload.iface, payload.props)
+	}
 }
 
 func (p *TimerPlayer) tick() {
@@ -123,7 +132,7 @@ func (p *TimerPlayer) tick() {
 			timeLeft := p.duration - elapsed
 			progressImg, err := util.MakeProgressCircle(progress)
 			if err != nil {
-				log.Printf("failed to create progress svg: %v", err)
+				log.Printf("create progress svg: %v", err)
 				continue
 			}
 
@@ -134,10 +143,13 @@ func (p *TimerPlayer) tick() {
 				"mpris:artUrl":  dbus.MakeVariant("file://" + progressImg),
 			}
 
-			p.emitPropertiesChanged("org.mpris.MediaPlayer2.Player", map[string]dbus.Variant{
-				"Metadata":       dbus.MakeVariant(metadata),
-				"PlaybackStatus": dbus.MakeVariant(p.playbackStatus),
-			})
+			p.emitter <- PropsChangedEvent{
+				iface: "org.mpris.MediaPlayer2.Player",
+				props: map[string]dbus.Variant{
+					"Metadata":       dbus.MakeVariant(metadata),
+					"PlaybackStatus": dbus.MakeVariant(p.playbackStatus),
+				},
+			}
 		}
 	}
 }
@@ -146,7 +158,7 @@ func (p *TimerPlayer) emitPropertiesChanged(iface string, changed map[string]dbu
 	err := p.conn.Emit(p.objectPath, "org.freedesktop.DBus.Properties.PropertiesChanged",
 		iface, changed, []string{})
 	if err != nil {
-		log.Printf("failed to emit properties: %v", err)
+		log.Printf("emit properties: %v", err)
 	}
 }
 
@@ -184,7 +196,7 @@ func (p *TimerPlayer) Get(iface, prop string) (dbus.Variant, *dbus.Error) {
 	case "org.mpris.MediaPlayer2":
 		switch prop {
 		case "Identity":
-			return dbus.MakeVariant("MPRIS Timer"), nil
+			return dbus.MakeVariant(util.AppName), nil
 		case "DesktopEntry":
 			return dbus.MakeVariant(util.AppId), nil
 		}
@@ -213,7 +225,7 @@ func (p *TimerPlayer) GetAll(iface string) (map[string]dbus.Variant, *dbus.Error
 	props := make(map[string]dbus.Variant)
 	switch iface {
 	case "org.mpris.MediaPlayer2":
-		props["Identity"] = dbus.MakeVariant("MPRIS Timer")
+		props["Identity"] = dbus.MakeVariant(util.AppName)
 		props["DesktopEntry"] = dbus.MakeVariant(util.AppId)
 	case "org.mpris.MediaPlayer2.Player":
 		props["PlaybackStatus"] = dbus.MakeVariant(p.playbackStatus)

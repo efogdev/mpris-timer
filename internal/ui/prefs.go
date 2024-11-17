@@ -236,6 +236,7 @@ func PopulatePresetsGroup(group *adw.PreferencesGroup) {
 	presetsBox.SetVisible(util.UserPrefs.ShowPresets)
 	presetsBox.AddCSSClass("presets-list")
 	presetsBox.SetVExpand(true)
+	presetsBox.SetOverflow(gtk.OverflowHidden)
 
 	RenderPresets([]string{})
 
