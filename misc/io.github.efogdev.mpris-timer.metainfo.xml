@@ -12,7 +12,7 @@
 	<summary>Native-feeling timers for GNOME</summary>
 	<content_rating type="oars-1.1" />
 	<releases>
-		<release date="2024-11-17" version="1.0.1">
+		<release date="2024-11-17" version="v1.0">
 			<description>
 				<p>Release 1.0.1: massive performance optimization, small bugfixes, little improvements</p>
 				<ul>
