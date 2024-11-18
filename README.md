@@ -8,7 +8,7 @@ Notifications included! Utilizing GTK4, Adwaita and MPRIS interface.
 >Play Timer aims to be as keyboard friendly as possible.
 >Use navigation keys (arrows, tab, shift+tab, space, enter) or start inputting numbers right away.
 
-![image](https://github.com/user-attachments/assets/3a6f6eb8-8e5f-4c16-a801-6e346bd4d100)
+![image](https://github.com/user-attachments/assets/8f84bf5e-53a3-4919-a5b3-341b3f5f34b8)
 
 ## Installation
 
