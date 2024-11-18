@@ -61,7 +61,12 @@ func NewTimePicker(app *adw.Application) {
 	escCtrl := gtk.NewEventControllerKey()
 	escCtrl.SetPropagationPhase(gtk.PhaseCapture)
 	escCtrl.ConnectKeyPressed(func(keyval, keycode uint, state gdk.ModifierType) (ok bool) {
-		if !slices.Contains(util.KeyEsc.GdkKeyvals(), keyval) {
+		isEsc := slices.Contains(util.KeyEsc.GdkKeyvals(), keyval)
+		isCtrlQ := slices.Contains(util.KeyQ.GdkKeyvals(), keyval) && state == gdk.ControlMask
+		isCtrlW := slices.Contains(util.KeyW.GdkKeyvals(), keyval) && state == gdk.ControlMask
+		isCtrlD := slices.Contains(util.KeyD.GdkKeyvals(), keyval) && state == gdk.ControlMask
+
+		if !isEsc && !isCtrlQ && !isCtrlW && !isCtrlD {
 			return false
 		}
 
@@ -244,6 +249,25 @@ func NewContent() *adw.NavigationPage {
 	titleLabel.SetText(util.Overrides.Title)
 	titleLabel.SetAlignment(.5)
 	titleLabel.SetSensitive(false)
+
+	rightKeyCtrl := gtk.NewEventControllerKey()
+	rightKeyCtrl.SetPropagationPhase(gtk.PhaseCapture)
+	rightKeyCtrl.ConnectKeyPressed(func(keyval, keycode uint, state gdk.ModifierType) (ok bool) {
+		_, pos, sel := titleLabel.SelectionBounds()
+
+		// OMFG
+		if slices.Contains(util.KeyRight.GdkKeyvals(), keyval) &&
+			state == gdk.NoModifierMask && initialPreset != nil &&
+			!sel && pos == len(titleLabel.Text()) {
+			initialPreset.Activate()
+			initialPreset.GrabFocus()
+			return true
+		}
+
+		return false
+	})
+
+	titleLabel.AddController(rightKeyCtrl)
 	titleLabel.ConnectChanged(func() {
 		util.Overrides.Title = titleLabel.Text()
 	})
@@ -254,7 +278,11 @@ func NewContent() *adw.NavigationPage {
 	titleBox.SetHExpand(true)
 	titleBox.Append(titleLabel)
 
-	vBox.Append(titleBox)
+	log.Printf("show title: %v", util.UserPrefs.ShowTitle)
+	if util.UserPrefs.ShowTitle {
+		vBox.Append(titleBox)
+	}
+
 	vBox.Append(hBox)
 
 	hrsLabel = gtk.NewEntry()

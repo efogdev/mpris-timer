@@ -58,7 +58,7 @@ go run cmd/main.go -help
 
 Build:
 ```shell
-go build -pgo default.pgo -tags wayland -ldflags="-s -w" -o ./.bin/app ./cmd/main.go
+go build -compiler gccgo -pgo default.pgo -tags wayland -ldflags="-s -w" -o ./.bin/app ./cmd/main.go
 ```
 
 Flatpak:

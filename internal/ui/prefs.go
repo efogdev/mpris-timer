@@ -114,47 +114,6 @@ func NewPrefsWidgets(parent *gtk.Box) {
 	parent.Append(presetsGroup)
 }
 
-func populateVisualsGroup(group *adw.PreferencesGroup, previewImage *gtk.Image) {
-	go renderPreview(previewImage)
-
-	color, err := util.RGBAFromHex(util.Overrides.Color)
-	if err != nil {
-		log.Fatalf("unexpected: nil color, %v (%s)", err, util.UserPrefs.ProgressColor)
-	}
-
-	dialog := gtk.NewColorDialog()
-	dialog.SetWithAlpha(false)
-	colorSwitch := gtk.NewColorDialogButton(dialog)
-	colorSwitch.AddCSSClass("color-picker-btn")
-	colorSwitch.SetRGBA(color)
-	colorSwitch.SetVExpand(false)
-	colorRow := adw.NewActionRow()
-	colorRow.AddSuffix(colorSwitch)
-	colorRow.SetTitle("Progress color")
-
-	colorSwitch.Connect("notify", func() {
-		util.SetProgressColor(util.HexFromRGBA(colorSwitch.RGBA()))
-	})
-
-	roundedSwitch := adw.NewSwitchRow()
-	roundedSwitch.SetTitle("Rounded corners")
-	roundedSwitch.SetActive(util.UserPrefs.Rounded)
-	roundedSwitch.Connect("notify::active", func() {
-		util.SetRounded(roundedSwitch.Active())
-	})
-
-	shadowSwitch := adw.NewSwitchRow()
-	shadowSwitch.SetTitle("Shadow")
-	shadowSwitch.SetActive(util.UserPrefs.Shadow)
-	shadowSwitch.Connect("notify::active", func() {
-		util.SetShadow(shadowSwitch.Active())
-	})
-
-	group.Add(colorRow)
-	group.Add(roundedSwitch)
-	group.Add(shadowSwitch)
-}
-
 func populateTimerGroup(group *adw.PreferencesGroup) {
 	textEntry := adw.NewEntryRow()
 	volumeRow := adw.NewActionRow()
@@ -209,7 +168,15 @@ func populateTimerGroup(group *adw.PreferencesGroup) {
 		util.SetDefaultTitle(titleEntry.Text())
 	})
 
-	textEntry.SetTitle("Default text")
+	titleSwitch := adw.NewSwitchRow()
+	titleSwitch.SetTitle("Title in UI")
+	titleSwitch.SetSubtitle("Requires restart")
+	titleSwitch.SetActive(util.UserPrefs.ShowTitle)
+	titleSwitch.Connect("notify::active", func() {
+		util.SetShowTitle(titleSwitch.Active())
+	})
+
+	textEntry.SetTitle("Default notification text")
 	textEntry.SetText(util.UserPrefs.DefaultText)
 	textEntry.SetSensitive(util.UserPrefs.EnableNotification)
 	textEntry.ConnectChanged(func() {
@@ -220,7 +187,49 @@ func populateTimerGroup(group *adw.PreferencesGroup) {
 	group.Add(volumeRow)
 	group.Add(notificationSwitch)
 	group.Add(titleEntry)
+	group.Add(titleSwitch)
 	group.Add(textEntry)
+}
+
+func populateVisualsGroup(group *adw.PreferencesGroup, previewImage *gtk.Image) {
+	go renderPreview(previewImage)
+
+	color, err := util.RGBAFromHex(util.Overrides.Color)
+	if err != nil {
+		log.Fatalf("unexpected: nil color, %v (%s)", err, util.UserPrefs.ProgressColor)
+	}
+
+	dialog := gtk.NewColorDialog()
+	dialog.SetWithAlpha(false)
+	colorSwitch := gtk.NewColorDialogButton(dialog)
+	colorSwitch.AddCSSClass("color-picker-btn")
+	colorSwitch.SetRGBA(color)
+	colorSwitch.SetVExpand(false)
+	colorRow := adw.NewActionRow()
+	colorRow.AddSuffix(colorSwitch)
+	colorRow.SetTitle("Progress color")
+
+	colorSwitch.Connect("notify", func() {
+		util.SetProgressColor(util.HexFromRGBA(colorSwitch.RGBA()))
+	})
+
+	roundedSwitch := adw.NewSwitchRow()
+	roundedSwitch.SetTitle("Rounded corners")
+	roundedSwitch.SetActive(util.UserPrefs.Rounded)
+	roundedSwitch.Connect("notify::active", func() {
+		util.SetRounded(roundedSwitch.Active())
+	})
+
+	shadowSwitch := adw.NewSwitchRow()
+	shadowSwitch.SetTitle("Shadow")
+	shadowSwitch.SetActive(util.UserPrefs.Shadow)
+	shadowSwitch.Connect("notify::active", func() {
+		util.SetShadow(shadowSwitch.Active())
+	})
+
+	group.Add(colorRow)
+	group.Add(roundedSwitch)
+	group.Add(shadowSwitch)
 }
 
 func populatePresetsGroup(group *adw.PreferencesGroup) {
@@ -332,6 +341,12 @@ func RenderPresets(toAdd []string) {
 		title.SetAlignment(0)
 		title.SetHExpand(true)
 
+		container.ConnectActivate(func() {
+			title.Activate()
+			title.GrabFocus()
+			title.SelectRegion(0, -1)
+		})
+
 		cleanTitle := func() {
 			title.Activate()
 			title.GrabFocus()
@@ -407,6 +422,7 @@ func RenderPresets(toAdd []string) {
 
 		btn := gtk.NewButton()
 		btn.SetChild(btnContent)
+		btn.SetCursorFromName("pointer")
 		btn.AddCSSClass("list-btn")
 		btn.ConnectClicked(func() {
 			var presets []string
@@ -457,6 +473,11 @@ func renderPreview(box *gtk.Image) {
 			log.Printf("render preview: %v", err)
 		}
 
-		box.SetFromPaintable(gtk.NewImageFromFile(imgFilename).Paintable())
+		img := gtk.NewImageFromFile(imgFilename)
+		if img == nil || box == nil {
+			continue
+		}
+
+		box.SetFromPaintable(img.Paintable())
 	}
 }

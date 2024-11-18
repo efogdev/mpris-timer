@@ -6,25 +6,43 @@ import (
 	"path"
 	"path/filepath"
 	"strings"
+	"text/template"
 )
 
 const (
 	AppId   = "io.github.efogdev.mpris-timer"
 	AppName = "Play Timer"
 
-	width         = 256
-	height        = 256
-	padding       = 16
-	strokeWidth   = 32
+	width         = 128
+	height        = 128
+	padding       = 8
+	strokeWidth   = 16
+	roundedOffset = -82 // origin is -90
 	bgStrokeColor = "#535353"
 )
 
 const svgTemplate = `
 <svg width="{{.Width}}" height="{{.Height}}">
-  <style>{{if .HasShadow}}#progress{ filter: drop-shadow(-5px 8px 6px rgb(16 16 16 / 0.35)); }{{end}}</style>
-  <circle cx="{{.CenterX}}" cy="{{.CenterY}}" r="{{.Radius}}" fill="none" stroke="{{.BgStrokeColor}}" stroke-width="{{.BaseWidth}}"{{if .HasRoundedCorners}} stroke-linecap="round"{{end}} />
-  <circle cx="{{.CenterX}}" cy="{{.CenterY}}" r="{{.Radius}}" fill="none" stroke="{{.FgStrokeColor}}" stroke-width="{{.StrokeWidth}}" stroke-dasharray="{{.Circumference}}" stroke-dashoffset="{{.DashOffset}}" transform="rotate(-90 {{.CenterX}} {{.CenterY}})" id="progress"{{if .HasRoundedCorners}} stroke-linecap="round"{{end}} />
+  <style>
+	{{if .HasShadow}}#progress{filter: drop-shadow(-4px 7px 6px rgb(16 16 16 / 0.2));}{{end}}
+	{{if .HasRoundedCorners}}{{if ge .Progress 75}}#progress{border-radius: 4px;}{{end}}{{end}}
+	</style>
+  <circle
+		cx="{{.CenterX}}" cy="{{.CenterY}}" r="{{.Radius}}" fill="none" stroke="{{.BgStrokeColor}}"
+		stroke-width="{{.BaseWidth}}"{{if .HasRoundedCorners}} stroke-linecap="round"{{end}}
+	/>
+  <circle id="progress"
+		cx="{{.CenterX}}" cy="{{.CenterY}}" r="{{.Radius}}" fill="none" stroke="{{.FgStrokeColor}}"
+		stroke-width="{{.StrokeWidth}}" stroke-dasharray="{{.Circumference}}" stroke-dashoffset="{{.DashOffset}}"
+		transform="rotate({{if .HasRoundedCorners}}{{.RoundedOffset}}{{else}}-90{{end}} {{.CenterX}} {{.CenterY}})"
+		{{if .HasRoundedCorners}} stroke-linecap="round"{{end}}
+	/>
 </svg>`
+
+var funcMap = template.FuncMap{
+	"div": func(a, b int) int { return a / b },
+	"sub": func(a, b int) int { return a - b },
+}
 
 var (
 	CacheDir string
@@ -45,6 +63,8 @@ type svgParams struct {
 	DashOffset        float64
 	HasShadow         bool
 	HasRoundedCorners bool
+	RoundedOffset     int
+	Progress          int
 }
 
 func init() {

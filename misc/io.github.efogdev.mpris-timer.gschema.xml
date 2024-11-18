@@ -45,6 +45,10 @@
 			<default>true</default>
 		</key>
 
+		<key name="show-title" type="b">
+			<default>true</default>
+		</key>
+
 		<key name="shadow" type="b">
 			<default>false</default>
 		</key>

@@ -69,9 +69,11 @@ func MakeProgressCircle(progress float64) (string, error) {
 		DashOffset:        dashOffset,
 		HasShadow:         Overrides.HasShadow,
 		HasRoundedCorners: Overrides.Rounded,
+		RoundedOffset:     roundedOffset,
+		Progress:          int(progress),
 	}
 
-	svgString, err := tpl.Parse(svgTemplate)
+	svgString, err := tpl.Funcs(funcMap).Parse(svgTemplate)
 	if err != nil {
 		return "", err
 	}

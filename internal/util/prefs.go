@@ -23,11 +23,9 @@ type Prefs struct {
 	RememberWindowSize bool
 	Shadow             bool
 	Rounded            bool
+	ShowTitle          bool
 	WindowWidth        uint
 	WindowHeight       uint
-
-	// ToDo
-	CachePrefix string
 }
 
 var (
@@ -51,11 +49,11 @@ func LoadPrefs() {
 		DefaultPreset:      settings.String("default-preset"),
 		DefaultTitle:       settings.String("default-title"),
 		DefaultText:        settings.String("default-text"),
-		CachePrefix:        settings.String("cache-prefix"),
 		ActivatePreset:     settings.Boolean("activate-preset"),
 		RememberWindowSize: settings.Boolean("remember-window-size"),
 		Shadow:             settings.Boolean("shadow"),
 		Rounded:            settings.Boolean("rounded"),
+		ShowTitle:          settings.Boolean("show-title"),
 		WindowWidth:        settings.Uint("window-width"),
 		WindowHeight:       settings.Uint("window-height"),
 	}
@@ -122,6 +120,11 @@ func SetRounded(value bool) {
 	Overrides.Rounded = value
 	UserPrefs.Rounded = value
 	settings.SetBoolean("rounded", value)
+}
+
+func SetShowTitle(value bool) {
+	UserPrefs.ShowTitle = value
+	settings.SetBoolean("show-title", value)
 }
 
 func SetProgressColor(value string) {

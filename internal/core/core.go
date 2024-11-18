@@ -30,6 +30,7 @@ type TimerPlayer struct {
 	startTime      time.Time
 	isPaused       bool
 	pausedAt       time.Time
+	interval       time.Duration
 	pausedFor      time.Duration
 	tickerDone     chan struct{}
 	emitter        chan PropsChangedEvent
@@ -41,11 +42,17 @@ func NewTimerPlayer(seconds int, name string) (*TimerPlayer, error) {
 		return nil, fmt.Errorf("duration must be positive")
 	}
 
+	interval := baseInterval
+	if seconds > 300 {
+		interval = time.Second / (baseFPS / 1.5)
+	}
+
 	return &TimerPlayer{
 		Name:           name,
 		duration:       time.Duration(seconds) * time.Second,
 		objectPath:     "/org/mpris/MediaPlayer2",
 		playbackStatus: "Playing",
+		interval:       interval,
 		tickerDone:     make(chan struct{}),
 		emitter:        make(chan PropsChangedEvent),
 		Done:           make(chan struct{}, 1),
@@ -107,7 +114,7 @@ func (p *TimerPlayer) emit() {
 }
 
 func (p *TimerPlayer) tick() {
-	ticker := time.NewTicker(baseInterval)
+	ticker := time.NewTicker(p.interval)
 	defer ticker.Stop()
 
 	for {

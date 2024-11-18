@@ -67,12 +67,13 @@
 
 .presets-list-title {
 	font-size: 24px;
-	padding: 12px 8px;
+	padding: 0 8px;
 }
 
 /* huh? */
 .presets-list-title > * > * {
 	background: transparent;
+	padding: 12px 0;
 }
 
 /* cmon go find the classname */
@@ -82,6 +83,11 @@
 
 .list-btn {
 	background: transparent;
+	opacity: 0.4;
+}
+
+.list-btn:hover {
+	opacity: .75;
 }
 
 .color-picker-btn {

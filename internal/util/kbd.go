@@ -15,6 +15,9 @@ const (
 	KeyUp
 	KeyDown
 	KeyEsc
+	KeyQ
+	KeyW
+	KeyD
 )
 
 func (k Key) GdkKeyvals() []uint {
@@ -33,6 +36,12 @@ func (k Key) GdkKeyvals() []uint {
 		return []uint{gdk.KEY_KP_Down, gdk.KEY_Down}
 	case KeyEsc:
 		return []uint{gdk.KEY_Escape}
+	case KeyQ:
+		return []uint{gdk.KEY_Q, gdk.KEY_q}
+	case KeyW:
+		return []uint{gdk.KEY_W, gdk.KEY_w}
+	case KeyD:
+		return []uint{gdk.KEY_D, gdk.KEY_d}
 	default:
 		panic("unknown key")
 	}
