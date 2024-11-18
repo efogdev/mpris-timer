@@ -1,12 +1,10 @@
 # Play Timer
+Timer app pretending to be a media player. 
+
 [![image](https://github.com/user-attachments/assets/75651dc5-de7a-4244-974a-47ee69adac0f)](https://flathub.org/apps/io.github.efogdev.mpris-timer)
 
-Timer app pretending to be a media player. \
 Ultimately, serves the only purpose — to start a timer quickly and efficiently. \
 Notifications included! Utilizing GTK4, Adwaita and MPRIS interface.
-
->Play Timer aims to be as keyboard friendly as possible.
->Use navigation keys (arrows, tab, shift+tab, space, enter) or start inputting numbers right away.
 
 ![image](https://github.com/user-attachments/assets/8f84bf5e-53a3-4919-a5b3-341b3f5f34b8)
 
@@ -16,9 +14,11 @@ Notifications included! Utilizing GTK4, Adwaita and MPRIS interface.
 flatpak install flathub io.github.efogdev.mpris-timer
 ```
 
-## Preview
+## Demo
+![2](https://github.com/user-attachments/assets/8fba3423-0133-4d79-8dfa-46c9995ba96b)
 
-![2](https://github.com/user-attachments/assets/7be07479-85bb-44b1-9f6f-0fc85190c89e)
+Play Timer aims to be as keyboard friendly as possible. \
+Use navigation keys (arrows, tab, shift+tab, space, enter) or start inputting numbers right away.
 
 ## CLI use
 
