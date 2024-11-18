@@ -1,11 +1,11 @@
-# MPRIS Timer
+# Play Timer
 [![image](https://github.com/user-attachments/assets/75651dc5-de7a-4244-974a-47ee69adac0f)](https://flathub.org/apps/io.github.efogdev.mpris-timer)
 
 A timer app (CLI/GUI) with seamless GNOME integration accomplished by pretending to be a media player. \
 Ultimately, serves the only purpose — to start a timer quickly and efficiently. \
 Notifications included! Utilizing GTK4, Adwaita and MPRIS interface.
 
->MPRIS Timer aims to be as keyboard friendly as possible.
+>Play Timer aims to be as keyboard friendly as possible.
 >Use navigation keys (arrows, tab, shift+tab, space, enter) or start inputting numbers right away.
 
 ![image](https://github.com/user-attachments/assets/3a6f6eb8-8e5f-4c16-a801-6e346bd4d100)

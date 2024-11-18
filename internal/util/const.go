@@ -4,12 +4,13 @@ import (
 	"github.com/diamondburned/gotk4/pkg/glib/v2"
 	"os"
 	"path"
+	"path/filepath"
 	"strings"
 )
 
 const (
 	AppId   = "io.github.efogdev.mpris-timer"
-	AppName = "MPRIS Timer"
+	AppName = "Play Timer"
 
 	width         = 256
 	height        = 256
@@ -20,32 +21,9 @@ const (
 
 const svgTemplate = `
 <svg width="{{.Width}}" height="{{.Height}}">
-    <defs>
-        <filter id="outer-shadow" x="-50%" y="-50%" width="200%" height="200%">
-            <feGaussianBlur in="SourceAlpha" stdDeviation="4" />
-            <feOffset dx="1" dy="1" result="offsetblur" />
-            <feFlood flood-color="rgba(65, 65, 65, 0.55)" />
-            <feComposite in2="offsetblur" operator="in" />
-            <feMerge>
-                <feMergeNode />
-                <feMergeNode in="SourceGraphic" />
-            </feMerge>
-        </filter>
-
-        <filter id="inner-shadow" x="-50%" y="-50%" width="160%" height="160%">
-            <feGaussianBlur in="SourceAlpha" stdDeviation="5" />
-            <feOffset dx="0" dy="0" result="offsetblur" />
-            <feFlood flood-color="rgba(110, 110, 110, 0.45)" />
-            <feComposite in2="offsetblur" operator="in" />
-            <feMerge>
-                <feMergeNode />
-                <feMergeNode in="SourceGraphic" />
-            </feMerge>
-        </filter>
-    </defs>
-
-    <circle cx="{{.CenterX}}" cy="{{.CenterY}}" r="{{.Radius}}" fill="none" stroke="{{.BgStrokeColor}}" stroke-width="{{.BaseWidth}}" filter="url(#outer-shadow)" />
-    <circle cx="{{.CenterX}}" cy="{{.CenterY}}" r="{{.Radius}}" fill="none" stroke="{{.FgStrokeColor}}" stroke-width="{{.StrokeWidth}}" stroke-dasharray="{{.Circumference}}" stroke-dashoffset="{{.DashOffset}}" transform="rotate(-90 {{.CenterX}} {{.CenterY}})" filter="url(#inner-shadow)" />
+  <style>{{if .HasShadow}}#progress{ filter: drop-shadow(-5px 8px 6px rgb(16 16 16 / 0.35)); }{{end}}</style>
+  <circle cx="{{.CenterX}}" cy="{{.CenterY}}" r="{{.Radius}}" fill="none" stroke="{{.BgStrokeColor}}" stroke-width="{{.BaseWidth}}"{{if .HasRoundedCorners}} stroke-linecap="round"{{end}} />
+  <circle cx="{{.CenterX}}" cy="{{.CenterY}}" r="{{.Radius}}" fill="none" stroke="{{.FgStrokeColor}}" stroke-width="{{.StrokeWidth}}" stroke-dasharray="{{.Circumference}}" stroke-dashoffset="{{.DashOffset}}" transform="rotate(-90 {{.CenterX}} {{.CenterY}})" id="progress"{{if .HasRoundedCorners}} stroke-linecap="round"{{end}} />
 </svg>`
 
 var (
@@ -54,17 +32,19 @@ var (
 )
 
 type svgParams struct {
-	Width         int
-	Height        int
-	CenterX       int
-	CenterY       int
-	Radius        float64
-	FgStrokeColor string
-	BgStrokeColor string
-	BaseWidth     int
-	StrokeWidth   int
-	Circumference float64
-	DashOffset    float64
+	Width             int
+	Height            int
+	CenterX           int
+	CenterY           int
+	Radius            float64
+	FgStrokeColor     string
+	BgStrokeColor     string
+	BaseWidth         int
+	StrokeWidth       int
+	Circumference     float64
+	DashOffset        float64
+	HasShadow         bool
+	HasRoundedCorners bool
 }
 
 func init() {
@@ -78,4 +58,26 @@ func init() {
 
 	_ = os.MkdirAll(CacheDir, 0755)
 	_ = os.MkdirAll(DataDir, 0755)
+
+	// because backward compatibility
+	go func() {
+		_ = filepath.Walk(CacheDir, func(path string, info os.FileInfo, err error) error {
+			if err != nil {
+				return err
+			}
+
+			if !info.IsDir() && filepath.Ext(info.Name()) == ".svg" {
+				_ = os.Remove(path)
+			}
+
+			return nil
+		})
+	}()
+}
+
+func bool2int(b bool) int {
+	if b {
+		return 1
+	}
+	return 0
 }

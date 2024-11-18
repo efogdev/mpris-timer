@@ -10,14 +10,15 @@ import (
 	"slices"
 	"strconv"
 	"strings"
+	"time"
 )
 
 const (
-	prefsMinWidth      = 300
+	prefsMinWidth      = 385
 	prefsMinHeight     = 200
-	prefsDefaultWidth  = 420
-	prefsDefaultHeight = 650
-	sliderWidth        = 150
+	prefsDefaultWidth  = 435
+	prefsDefaultHeight = 625
+	sliderWidth        = 175
 )
 
 var prefsWin *adw.Window
@@ -82,17 +83,79 @@ func NewPrefsWidgets(parent *gtk.Box) {
 	timerGroup := adw.NewPreferencesGroup()
 	timerGroup.SetTitle("Timer")
 
+	visualsGroup := adw.NewPreferencesGroup()
+	visualsGroup.SetTitle("Visuals")
+	visualsGroup.SetVAlign(gtk.AlignCenter)
+
+	visualsBox := gtk.NewBox(gtk.OrientationHorizontal, 0)
+	visualsBox.Append(visualsGroup)
+
+	previewBox := gtk.NewBox(gtk.OrientationHorizontal, 0)
+	previewBox.AddCSSClass("live-preview")
+	previewBox.SetVAlign(gtk.AlignCenter)
+	previewBox.SetHAlign(gtk.AlignEnd)
+	previewBox.SetMarginTop(40)
+
+	previewImage := gtk.NewImage()
+	previewImage.SetSizeRequest(128, 128)
+
+	previewBox.Append(previewImage)
+	visualsBox.Append(previewBox)
+
 	presetsGroup := adw.NewPreferencesGroup()
 	presetsGroup.SetTitle("Interface")
 
-	PopulateTimerGroup(timerGroup)
-	PopulatePresetsGroup(presetsGroup)
+	populateTimerGroup(timerGroup)
+	populateVisualsGroup(visualsGroup, previewImage)
+	populatePresetsGroup(presetsGroup)
 
 	parent.Append(timerGroup)
+	parent.Append(visualsBox)
 	parent.Append(presetsGroup)
 }
 
-func PopulateTimerGroup(group *adw.PreferencesGroup) {
+func populateVisualsGroup(group *adw.PreferencesGroup, previewImage *gtk.Image) {
+	go renderPreview(previewImage)
+
+	color, err := util.RGBAFromHex(util.Overrides.Color)
+	if err != nil {
+		log.Fatalf("unexpected: nil color, %v (%s)", err, util.UserPrefs.ProgressColor)
+	}
+
+	dialog := gtk.NewColorDialog()
+	dialog.SetWithAlpha(false)
+	colorSwitch := gtk.NewColorDialogButton(dialog)
+	colorSwitch.AddCSSClass("color-picker-btn")
+	colorSwitch.SetRGBA(color)
+	colorSwitch.SetVExpand(false)
+	colorRow := adw.NewActionRow()
+	colorRow.AddSuffix(colorSwitch)
+	colorRow.SetTitle("Progress color")
+
+	colorSwitch.Connect("notify", func() {
+		util.SetProgressColor(util.HexFromRGBA(colorSwitch.RGBA()))
+	})
+
+	roundedSwitch := adw.NewSwitchRow()
+	roundedSwitch.SetTitle("Rounded corners")
+	roundedSwitch.SetActive(util.UserPrefs.Rounded)
+	roundedSwitch.Connect("notify::active", func() {
+		util.SetRounded(roundedSwitch.Active())
+	})
+
+	shadowSwitch := adw.NewSwitchRow()
+	shadowSwitch.SetTitle("Shadow")
+	shadowSwitch.SetActive(util.UserPrefs.Shadow)
+	shadowSwitch.Connect("notify::active", func() {
+		util.SetShadow(shadowSwitch.Active())
+	})
+
+	group.Add(colorRow)
+	group.Add(roundedSwitch)
+	group.Add(shadowSwitch)
+}
+
+func populateTimerGroup(group *adw.PreferencesGroup) {
 	textEntry := adw.NewEntryRow()
 	volumeRow := adw.NewActionRow()
 	volumeSlider := gtk.NewScaleWithRange(gtk.OrientationHorizontal, 0, 100, 1)
@@ -153,34 +216,14 @@ func PopulateTimerGroup(group *adw.PreferencesGroup) {
 		util.SetDefaultText(textEntry.Text())
 	})
 
-	color, err := util.RGBAFromHex(util.Overrides.Color)
-	if err != nil {
-		log.Fatalf("unexpected: nil color, %v (%s)", err, util.UserPrefs.ProgressColor)
-	}
-
-	dialog := gtk.NewColorDialog()
-	dialog.SetWithAlpha(false)
-	colorSwitch := gtk.NewColorDialogButton(dialog)
-	colorSwitch.AddCSSClass("color-picker-btn")
-	colorSwitch.SetRGBA(color)
-	colorSwitch.SetVExpand(false)
-	colorRow := adw.NewActionRow()
-	colorRow.AddSuffix(colorSwitch)
-	colorRow.SetTitle("Progress color")
-
-	colorSwitch.Connect("notify", func() {
-		util.SetProgressColor(util.HexFromRGBA(colorSwitch.RGBA()))
-	})
-
 	group.Add(soundSwitch)
 	group.Add(volumeRow)
 	group.Add(notificationSwitch)
 	group.Add(titleEntry)
 	group.Add(textEntry)
-	group.Add(colorRow)
 }
 
-func PopulatePresetsGroup(group *adw.PreferencesGroup) {
+func populatePresetsGroup(group *adw.PreferencesGroup) {
 	newPresetBtn := gtk.NewButton()
 	defaultPresetSelect := adw.NewComboRow()
 	activatePresetSwitch := adw.NewSwitchRow()
@@ -360,7 +403,7 @@ func RenderPresets(toAdd []string) {
 		btnContent := adw.NewButtonContent()
 		btnContent.SetHExpand(false)
 		btnContent.SetLabel("")
-		btnContent.SetIconName("edit-delete-symbolic")
+		btnContent.SetIconName("user-trash-symbolic")
 
 		btn := gtk.NewButton()
 		btn.SetChild(btnContent)
@@ -385,5 +428,35 @@ func RenderPresets(toAdd []string) {
 		row.SetChild(box)
 		row.SetActivatableWidget(title)
 		presetsBox.Append(container)
+	}
+}
+
+func renderPreview(box *gtk.Image) {
+	tickFor := time.Second * 7                 // 7 seconds timer
+	ticker := time.NewTicker(time.Second / 45) // 45 base fps
+
+	go func() {
+		prefsWin.ConnectCloseRequest(func() bool {
+			ticker.Stop()
+			return false
+		})
+	}()
+
+	timeStart := time.Now()
+	for range ticker.C {
+		timePassed := time.Since(timeStart).Microseconds()
+		percent := float64(timePassed) / float64(tickFor.Microseconds()) * 100
+
+		if percent >= 100 {
+			timeStart = time.Now()
+			continue
+		}
+
+		imgFilename, err := util.MakeProgressCircle(percent)
+		if err != nil {
+			log.Printf("render preview: %v", err)
+		}
+
+		box.SetFromPaintable(gtk.NewImageFromFile(imgFilename).Paintable())
 	}
 }

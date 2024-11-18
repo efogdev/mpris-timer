@@ -7,15 +7,17 @@ import (
 )
 
 var Overrides = struct {
-	Notify   bool
-	Sound    bool
-	Volume   float64
-	Silence  int
-	UseUI    bool
-	Duration int
-	Title    string
-	Text     string
-	Color    string
+	Notify    bool
+	Sound     bool
+	Volume    float64
+	Silence   int
+	UseUI     bool
+	Duration  int
+	Title     string
+	Text      string
+	Color     string
+	HasShadow bool
+	Rounded   bool
 }{}
 
 func LoadFlags() {
@@ -24,6 +26,8 @@ func LoadFlags() {
 	flag.Float64Var(&Overrides.Volume, "volume", UserPrefs.Volume, "Volume [0-1]")
 	flag.IntVar(&Overrides.Silence, "silence", 0, "Play this milliseconds of silence before the actual sound — might be helpful for audio devices that wake up not immediately")
 	flag.BoolVar(&Overrides.UseUI, "ui", false, "Show timepicker UI (default true)")
+	flag.BoolVar(&Overrides.HasShadow, "shadow", UserPrefs.Shadow, "Shadow for progress image")
+	flag.BoolVar(&Overrides.Rounded, "rounded", UserPrefs.Rounded, "Rounded corners")
 	flag.IntVar(&Overrides.Duration, "start", 0, "Start the timer immediately, don't show UI")
 	flag.StringVar(&Overrides.Title, "title", UserPrefs.DefaultTitle, "Name/title of the timer")
 	flag.StringVar(&Overrides.Text, "text", UserPrefs.DefaultText, "Notification text")

@@ -7,7 +7,6 @@ import (
 	"math"
 	"mpris-timer/internal/util"
 	"os"
-	"strconv"
 	"time"
 )
 
@@ -54,14 +53,14 @@ func NewTimerPlayer(seconds int, name string) (*TimerPlayer, error) {
 }
 
 func (p *TimerPlayer) Start() error {
-	id := strconv.Itoa(int(time.Now().UnixMicro()))[8:]
+	id := os.Getpid()
 	conn, err := dbus.SessionBus()
 	if err != nil {
 		return fmt.Errorf("connect to session bus: %w", err)
 	}
 
 	p.conn = conn
-	p.serviceName = fmt.Sprintf("org.mpris.MediaPlayer2.%s.run-%s", util.AppId, id)
+	p.serviceName = fmt.Sprintf("org.mpris.MediaPlayer2.%s.instance-%d", util.AppId, id)
 
 	reply, err := conn.RequestName(p.serviceName, dbus.NameFlagAllowReplacement)
 	if err != nil || reply != dbus.RequestNameReplyPrimaryOwner {

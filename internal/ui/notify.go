@@ -17,9 +17,6 @@ var icon []byte
 func Notify(title string, text string) {
 	log.Printf("notify: %s", title)
 
-	// a workaround; could've used notify-send
-	// but then default click action is to open timer again
-	// which is not desired
 	if !util.Overrides.UseUI {
 		sendNotification(util.App, title, text)
 	} else {

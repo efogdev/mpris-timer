@@ -45,6 +45,14 @@
 			<default>true</default>
 		</key>
 
+		<key name="shadow" type="b">
+			<default>false</default>
+		</key>
+
+		<key name="rounded" type="b">
+			<default>true</default>
+		</key>
+
 		<key name="cache-prefix" type="s">
 			<default>'default'</default>
 		</key>

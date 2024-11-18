@@ -21,6 +21,8 @@ type Prefs struct {
 	DefaultText        string
 	ActivatePreset     bool
 	RememberWindowSize bool
+	Shadow             bool
+	Rounded            bool
 	WindowWidth        uint
 	WindowHeight       uint
 
@@ -52,6 +54,8 @@ func LoadPrefs() {
 		CachePrefix:        settings.String("cache-prefix"),
 		ActivatePreset:     settings.Boolean("activate-preset"),
 		RememberWindowSize: settings.Boolean("remember-window-size"),
+		Shadow:             settings.Boolean("shadow"),
+		Rounded:            settings.Boolean("rounded"),
 		WindowWidth:        settings.Uint("window-width"),
 		WindowHeight:       settings.Uint("window-height"),
 	}
@@ -106,6 +110,18 @@ func SetActivatePreset(value bool) {
 func SetRememberWindowSize(value bool) {
 	UserPrefs.RememberWindowSize = value
 	settings.SetBoolean("remember-window-size", value)
+}
+
+func SetShadow(value bool) {
+	Overrides.HasShadow = value
+	UserPrefs.Shadow = value
+	settings.SetBoolean("shadow", value)
+}
+
+func SetRounded(value bool) {
+	Overrides.Rounded = value
+	UserPrefs.Rounded = value
+	settings.SetBoolean("rounded", value)
 }
 
 func SetProgressColor(value string) {

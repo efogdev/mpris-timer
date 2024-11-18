@@ -15,9 +15,9 @@ import (
 var cssString string
 
 const (
-	minWidth      = 400
-	minHeight     = 160
-	collapseWidth = 520
+	minWidth      = 350
+	minHeight     = 200
+	collapseWidth = 460
 )
 
 var (
@@ -27,6 +27,7 @@ var (
 	hrsLabel      *gtk.Entry
 	minLabel      *gtk.Entry
 	secLabel      *gtk.Entry
+	titleLabel    *gtk.Entry
 	flowBox       *gtk.FlowBox
 )
 
@@ -96,10 +97,11 @@ func NewTimePicker(app *adw.Application) {
 
 	body.SetContent(NewContent())
 	body.SetSidebar(NewSidebar())
-	body.SetSidebarWidthFraction(.35)
+	body.SetSidebarWidthFraction(.36)
 	body.SetEnableShowGesture(true)
 	body.SetEnableHideGesture(true)
 	body.SetShowSidebar(util.UserPrefs.ShowPresets && len(util.UserPrefs.Presets) > 0)
+	body.SetMinSidebarWidth(40)
 
 	win.SetVisible(true)
 	minLabel.SetText("00")
@@ -117,13 +119,18 @@ func NewTimePicker(app *adw.Application) {
 		}
 	}
 
+	titleLabel.SetSensitive(true)
 	win.Present()
 }
 
 func NewSidebar() *adw.NavigationPage {
 	sidebar := adw.NewNavigationPage(gtk.NewBox(gtk.OrientationVertical, 0), "Presets")
-	flowBox = gtk.NewFlowBox()
+	sidebar.SetOverflow(gtk.OverflowHidden)
 
+	flowBox = gtk.NewFlowBox()
+	flowBox.SetHomogeneous(true)
+	flowBox.SetMinChildrenPerLine(1)
+	flowBox.SetMaxChildrenPerLine(3)
 	flowBox.SetSelectionMode(gtk.SelectionBrowse)
 	flowBox.SetVAlign(gtk.AlignCenter)
 	flowBox.SetColumnSpacing(16)
@@ -223,25 +230,41 @@ func NewSidebar() *adw.NavigationPage {
 func NewContent() *adw.NavigationPage {
 	startBtn = gtk.NewButton()
 
-	vBox := gtk.NewBox(gtk.OrientationVertical, 8)
+	vBox := gtk.NewBox(gtk.OrientationVertical, 0)
 	hBox := gtk.NewBox(gtk.OrientationHorizontal, 8)
-	clamp := adw.NewClamp()
-	content := adw.NewNavigationPage(clamp, "New timer")
+	content := adw.NewNavigationPage(vBox, "New timer")
+	vBox.SetHExpand(true)
+	hBox.SetMarginStart(20)
+	hBox.SetMarginEnd(20)
 
-	clamp.SetChild(vBox)
+	titleLabel = gtk.NewEntry()
+	titleLabel.SetHExpand(true)
+	titleLabel.AddCSSClass("entry")
+	titleLabel.AddCSSClass("title-entry")
+	titleLabel.SetText(util.Overrides.Title)
+	titleLabel.SetAlignment(.5)
+	titleLabel.SetSensitive(false)
+	titleLabel.ConnectChanged(func() {
+		util.Overrides.Title = titleLabel.Text()
+	})
+
+	titleBox := gtk.NewBox(gtk.OrientationHorizontal, 8)
+	titleBox.AddCSSClass("title-box")
+	titleBox.SetVAlign(gtk.AlignCenter)
+	titleBox.SetHExpand(true)
+	titleBox.Append(titleLabel)
+
+	vBox.Append(titleBox)
 	vBox.Append(hBox)
 
 	hrsLabel = gtk.NewEntry()
 	minLabel = gtk.NewEntry()
 	secLabel = gtk.NewEntry()
 
-	finish := func() {
-		startBtn.Activate()
-	}
-
-	setupTimeEntry(hrsLabel, nil, &minLabel.Widget, 23, finish)
-	setupTimeEntry(minLabel, &hrsLabel.Widget, &secLabel.Widget, 59, finish)
-	setupTimeEntry(secLabel, &minLabel.Widget, &startBtn.Widget, 59, finish)
+	fin := func() { startBtn.Activate() }
+	setupTimeEntry(hrsLabel, nil, &minLabel.Widget, 23, fin)
+	setupTimeEntry(minLabel, &hrsLabel.Widget, &secLabel.Widget, 59, fin)
+	setupTimeEntry(secLabel, &minLabel.Widget, &startBtn.Widget, 59, fin)
 
 	hrsLeftCtrl := gtk.NewEventControllerKey()
 	hrsLeftCtrl.SetPropagationPhase(gtk.PhaseCapture)
@@ -320,26 +343,41 @@ func NewContent() *adw.NavigationPage {
 	prefsBtnContent := adw.NewButtonContent()
 	prefsBtnContent.SetHExpand(false)
 	prefsBtnContent.SetLabel("")
-	prefsBtnContent.SetIconName("preferences-system-symbolic")
+	prefsBtnContent.SetIconName("emblem-system-symbolic")
 
 	prefsBtn := gtk.NewButton()
 	prefsBtn.SetChild(prefsBtnContent)
 	prefsBtn.AddCSSClass("control-btn")
 	prefsBtn.AddCSSClass("prefs-btn")
 	prefsBtn.SetFocusable(false)
-
 	prefsBtn.ConnectClicked(func() {
 		NewPrefsWindow()
 	})
 
-	footer := gtk.NewBox(gtk.OrientationHorizontal, 16)
+	closeBtnContent := adw.NewButtonContent()
+	closeBtnContent.SetHExpand(false)
+	closeBtnContent.SetLabel("")
+	closeBtnContent.SetIconName("application-exit-symbolic")
+
+	exitBtn := gtk.NewButton()
+	exitBtn.SetChild(closeBtnContent)
+	exitBtn.AddCSSClass("control-btn")
+	exitBtn.AddCSSClass("prefs-btn")
+	exitBtn.SetFocusable(false)
+	exitBtn.ConnectClicked(func() {
+		win.Close()
+		os.Exit(0)
+	})
+
+	footer := gtk.NewBox(gtk.OrientationHorizontal, 12)
 	footer.SetVAlign(gtk.AlignCenter)
 	footer.SetHAlign(gtk.AlignCenter)
 	footer.SetHExpand(false)
-	footer.SetMarginBottom(16)
+	footer.SetMarginBottom(4)
 	footer.AddCSSClass("footer")
 	footer.Append(startBtn)
 	footer.Append(prefsBtn)
+	footer.Append(exitBtn)
 	vBox.Append(footer)
 
 	return content

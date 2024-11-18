@@ -8,7 +8,7 @@
 		<color type="primary" scheme_preference="dark">#194894</color>
 	</branding>
 	
-	<name>MPRIS Timer</name>
+	<name>Play Timer</name>
 	<summary>Native-feeling timers for GNOME</summary>
 	<content_rating type="oars-1.1" />
 	<releases>
@@ -68,7 +68,7 @@
 			Notifications included! Utilizing GTK4, Adwaita and MPRIS interface.
 		</p>
 		<p>
-			MPRIS Timer aims to be as keyboard friendly as possible. 
+			Play Timer aims to be as keyboard friendly as possible. 
 			Use navigation keys (arrows, tab, shift+tab, space, enter) or start inputting numbers right away.
 		</p>
 	</description>

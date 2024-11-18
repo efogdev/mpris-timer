@@ -1,7 +1,7 @@
 [Desktop Entry]
 Type=Application
 Exec=mpris-timer -ui
-Name=MPRIS Timer
+Name=Play Timer
 Icon=io.github.efogdev.mpris-timer
 Terminal=false
 Categories=Utility;

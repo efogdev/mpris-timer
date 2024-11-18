@@ -1,13 +1,15 @@
 .flow-box {
-	margin: 24px;
+	margin: 20px;
 }
 
 .timer-entry {
 	font-size: 56px;
+	line-height: 56px;
 }
 
 .preset-lbl {
-	padding: 8px;
+	font-size: 15px;
+	padding: 8px 8px;
 	margin: 0;
 }
 
@@ -17,12 +19,32 @@
 	margin: 16px 0;
 }
 
+.prefs-btn, .exit-btn {
+	padding: 4px 12px;
+	opacity: .5;
+}
+
+.prefs-btn:hover {
+	opacity: .75;
+}
+
 .footer {
 	margin: 0 24px;
 }
 
 .entry {
 	background-color: transparent;
+}
+
+.title-box {
+	margin: 12px 6px 0 8px;
+}
+
+.title-entry {
+	margin: 0;
+	font-size: 16px;
+	opacity: 0.6;
+	outline: none;
 }
 
 .semicolon {
@@ -64,4 +86,8 @@
 
 .color-picker-btn {
 	margin: 8px 0;
+}
+
+.live-preview {
+	margin-left: 16px;
 }

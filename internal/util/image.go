@@ -21,22 +21,7 @@ var (
 )
 
 func InitCache() {
-	err := filepath.Walk(CacheDir, func(path string, info os.FileInfo, err error) error {
-		if err != nil {
-			return err
-		}
-
-		if !info.IsDir() && filepath.Ext(info.Name()) == ".svg" {
-			cache[path] = struct{}{}
-		}
-
-		return nil
-	})
-
-	if err != nil {
-		fmt.Printf("checking cache dir: %v\n", err)
-		return
-	}
+	walk(CacheDir)
 
 	cacheMu.Lock()
 	cacheLoaded = true
@@ -45,7 +30,9 @@ func InitCache() {
 
 func MakeProgressCircle(progress float64) (string, error) {
 	progress = math.Max(0, math.Min(100, progress))
-	filename := path.Join(CacheDir, fmt.Sprintf("%s.%.2f.svg", strings.Replace(Overrides.Color, "#", "", 1), progress))
+	dirname := path.Join(CacheDir, strings.ToUpper(strings.Replace(Overrides.Color, "#", "", 1)))
+	footprint := fmt.Sprintf("sh%v.r%v.%.2f", bool2int(Overrides.HasShadow), bool2int(Overrides.Rounded), progress)
+	filename := path.Join(dirname, footprint+".svg")
 
 	cacheMu.RLock()
 	if cacheLoaded {
@@ -69,17 +56,19 @@ func MakeProgressCircle(progress float64) (string, error) {
 	dashOffset := circumference * (1 - progress/100)
 
 	data := svgParams{
-		Width:         width,
-		Height:        height,
-		CenterX:       centerX,
-		CenterY:       centerY,
-		Radius:        radius,
-		BaseWidth:     baseWidth,
-		StrokeWidth:   strokeWidth,
-		FgStrokeColor: Overrides.Color,
-		BgStrokeColor: bgStrokeColor,
-		Circumference: circumference,
-		DashOffset:    dashOffset,
+		Width:             width,
+		Height:            height,
+		CenterX:           centerX,
+		CenterY:           centerY,
+		Radius:            radius,
+		BaseWidth:         baseWidth,
+		StrokeWidth:       strokeWidth,
+		FgStrokeColor:     Overrides.Color,
+		BgStrokeColor:     bgStrokeColor,
+		Circumference:     circumference,
+		DashOffset:        dashOffset,
+		HasShadow:         Overrides.HasShadow,
+		HasRoundedCorners: Overrides.Rounded,
 	}
 
 	svgString, err := tpl.Parse(svgTemplate)
@@ -93,10 +82,34 @@ func MakeProgressCircle(progress float64) (string, error) {
 		return "", err
 	}
 
+	_ = os.MkdirAll(dirname, 0755)
 	err = os.WriteFile(filename, svgBuffer.Bytes(), 0644)
 	if err != nil {
 		return "", fmt.Errorf("write SVG: %w", err)
 	}
 
 	return filename, nil
+}
+
+func walk(filename string) {
+	err := filepath.Walk(filename, func(path string, info os.FileInfo, err error) error {
+		if err != nil || filename == path {
+			return err
+		}
+
+		if !info.IsDir() && filepath.Ext(info.Name()) == ".svg" {
+			cache[path] = struct{}{}
+		}
+
+		if info.IsDir() {
+			walk(path)
+		}
+
+		return nil
+	})
+
+	if err != nil {
+		fmt.Printf("checking cache dir: %v\n", err)
+		return
+	}
 }
