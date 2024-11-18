@@ -1,7 +1,7 @@
 # Play Timer
 [![image](https://github.com/user-attachments/assets/75651dc5-de7a-4244-974a-47ee69adac0f)](https://flathub.org/apps/io.github.efogdev.mpris-timer)
 
-A timer app (CLI/GUI) with seamless GNOME integration accomplished by pretending to be a media player. \
+Timer app pretending to be a media player. \
 Ultimately, serves the only purpose — to start a timer quickly and efficiently. \
 Notifications included! Utilizing GTK4, Adwaita and MPRIS interface.
 
@@ -24,24 +24,28 @@ flatpak install flathub io.github.efogdev.mpris-timer
 
 ```text
 Usage of mpris-timer:
-  -ui
-      Show timepicker UI (default true)
-  -notify
-      Send desktop notification (default true)
   -color string
-      Progress color (#HEX) for the player, use "default" for the GTK accent color (default "default")
-  -sound
-      Play sound (default true)
-  -start int
-      Start the timer immediately, don't show UI
-  -volume float
-      Volume [0-1] (default 1)
-  -text string
-      Notification text (default "Time is up!")
-  -title string
-      Name/title of the timer (default "Timer")
+    	Progress color (#HEX) for the player, use "default" for the GTK accent color (default "default")
+  -notify
+    	Send desktop notification (default true)
+  -rounded
+    	Rounded corners (default true)
+  -shadow
+    	Shadow for progress image (default true)
   -silence int
-      Play this milliseconds of silence before the actual sound — might be helpful for audio devices that wake up not immediately
+    	Play this milliseconds of silence before the actual sound — might be helpful for audio devices that wake up not immediately
+  -sound
+    	Play sound (default true)
+  -start int
+    	Start the timer immediately, don't show UI
+  -text string
+    	Notification text (default "Time is up!")
+  -title string
+    	Name/title of the timer (default "Timer")
+  -ui
+    	Show timepicker UI (default true)
+  -volume float
+    	Volume [0-1] (default 1)
 ```
 
 ## Development
@@ -54,7 +58,7 @@ go run cmd/main.go -help
 
 Build:
 ```shell
-go build -pgo default.pgo -tags native,wayland -ldflags="-s -w" -o ./.bin/app ./cmd/main.go
+go build -pgo default.pgo -tags wayland -ldflags="-s -w" -o ./.bin/app ./cmd/main.go
 ```
 
 Flatpak:
@@ -65,4 +69,4 @@ flatpak run org.flatpak.Builder --force-clean --sandbox --user --install --insta
 ## ToDo
 
 1) Custom sounds
-2) Custom backward/forward buttons behavior 
+2) Progress styles
