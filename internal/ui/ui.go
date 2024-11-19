@@ -254,14 +254,13 @@ func NewContent() *adw.NavigationPage {
 	rightKeyCtrl.SetPropagationPhase(gtk.PhaseCapture)
 	rightKeyCtrl.ConnectKeyPressed(func(keyval, keycode uint, state gdk.ModifierType) (ok bool) {
 		_, pos, sel := titleLabel.SelectionBounds()
-
-		// OMFG
-		if slices.Contains(util.KeyRight.GdkKeyvals(), keyval) &&
-			state == gdk.NoModifierMask && initialPreset != nil &&
-			!sel && pos == len(titleLabel.Text()) {
-			initialPreset.Activate()
-			initialPreset.GrabFocus()
-			return true
+		if state == gdk.NoModifierMask && initialPreset != nil && !sel {
+			toRight := util.UserPrefs.PresetsOnRight && slices.Contains(util.KeyRight.GdkKeyvals(), keyval) && pos == len(titleLabel.Text())
+			toLeft := !util.UserPrefs.PresetsOnRight && slices.Contains(util.KeyLeft.GdkKeyvals(), keyval) && pos == 0
+			if toRight || toLeft {
+				initialPreset.GrabFocus()
+				return true
+			}
 		}
 
 		return false

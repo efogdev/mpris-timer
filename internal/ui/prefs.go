@@ -74,6 +74,7 @@ func NewPrefsWindow() {
 
 var (
 	presetsOnRightSwitch *adw.SwitchRow
+	defaultPresetSelect  *adw.ComboRow
 	presetsBox           *gtk.ListBox
 )
 
@@ -233,8 +234,8 @@ func populateVisualsGroup(group *adw.PreferencesGroup, previewImage *gtk.Image) 
 }
 
 func populatePresetsGroup(group *adw.PreferencesGroup) {
+	defaultPresetSelect = adw.NewComboRow()
 	newPresetBtn := gtk.NewButton()
-	defaultPresetSelect := adw.NewComboRow()
 	activatePresetSwitch := adw.NewSwitchRow()
 
 	winSizeSwitch := adw.NewSwitchRow()
@@ -266,10 +267,8 @@ func populatePresetsGroup(group *adw.PreferencesGroup) {
 		newPresetBtn.SetVisible(showPresetsSwitch.Active())
 	})
 
+	populateDefaultPresetSelect()
 	defaultPresetSelect.SetTitle("Default preset")
-	defaultPresetSelect.SetModel(gtk.NewStringList(util.UserPrefs.Presets))
-	selectedPos := slices.Index(util.UserPrefs.Presets, util.UserPrefs.DefaultPreset)
-	defaultPresetSelect.SetSelected(uint(selectedPos))
 	defaultPresetSelect.SetActivatable(true)
 	defaultPresetSelect.SetSensitive(showPresetsSwitch.Active())
 	defaultPresetSelect.Connect("notify::selected", func() {
@@ -318,6 +317,25 @@ func populatePresetsGroup(group *adw.PreferencesGroup) {
 	group.Add(footer)
 }
 
+func populateDefaultPresetSelect() {
+	if len(util.UserPrefs.Presets) == 0 {
+		defaultPresetSelect.SetModel(gtk.NewStringList(make([]string, 0)))
+		return
+	}
+
+	selectedPos := slices.Index(util.UserPrefs.Presets, util.UserPrefs.DefaultPreset)
+	i := uint(selectedPos)
+	if selectedPos == -1 {
+		i = 0
+	}
+
+	defaultPresetSelect.SetModel(gtk.NewStringList(util.UserPrefs.Presets))
+	defaultPresetSelect.SetSelected(i)
+
+	preset := util.UserPrefs.Presets[i]
+	util.SetDefaultPreset(preset)
+}
+
 func RenderPresets(toAdd []string) {
 	newPresets := toAdd
 	if len(toAdd) == 0 {
@@ -342,13 +360,11 @@ func RenderPresets(toAdd []string) {
 		title.SetHExpand(true)
 
 		container.ConnectActivate(func() {
-			title.Activate()
 			title.GrabFocus()
 			title.SelectRegion(0, -1)
 		})
 
 		cleanTitle := func() {
-			title.Activate()
 			title.GrabFocus()
 			title.SetText("00:01")
 		}
@@ -395,8 +411,14 @@ func RenderPresets(toAdd []string) {
 				presets = append(presets, p)
 			}
 
+			if container.Index() == slices.Index(util.UserPrefs.Presets, util.UserPrefs.DefaultPreset) {
+				util.SetDefaultPreset(newText)
+			}
+
 			title.SetText(newText)
 			util.SetPresets(presets)
+
+			populateDefaultPresetSelect()
 		}
 
 		focusCtrl := gtk.NewEventControllerFocus()
@@ -436,6 +458,7 @@ func RenderPresets(toAdd []string) {
 
 			util.SetPresets(presets)
 			presetsBox.Remove(container)
+			populateDefaultPresetSelect()
 		})
 
 		box.Append(title)
