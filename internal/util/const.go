@@ -2,10 +2,12 @@ package util
 
 import (
 	"github.com/diamondburned/gotk4/pkg/glib/v2"
+	"log"
 	"os"
 	"path"
 	"path/filepath"
 	"strings"
+	"text/template"
 )
 
 const (
@@ -41,6 +43,7 @@ const svgTemplate = `
 var (
 	CacheDir string
 	DataDir  string
+	svgTpl   *template.Template
 )
 
 type svgParams struct {
@@ -62,6 +65,12 @@ type svgParams struct {
 }
 
 func init() {
+	var err error
+	svgTpl, err = tpl.Parse(svgTemplate)
+	if err != nil {
+		log.Println(err)
+	}
+
 	DataDir = glib.GetUserDataDir()
 	if !strings.Contains(DataDir, AppId) {
 		DataDir = path.Join(DataDir, AppId)

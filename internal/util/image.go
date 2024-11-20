@@ -58,7 +58,7 @@ func MakeProgressCircle(progress float64) (string, error) {
 	circumference := 2 * math.Pi * radius
 	dashOffset := circumference * (1 - progress/100)
 
-	data := svgParams{
+	params := svgParams{
 		Width:             width,
 		Height:            height,
 		CenterX:           centerX,
@@ -76,19 +76,14 @@ func MakeProgressCircle(progress float64) (string, error) {
 		Progress:          int(progress),
 	}
 
-	svgString, err := tpl.Parse(svgTemplate)
-	if err != nil {
-		return "", err
-	}
-
-	var svgBuffer bytes.Buffer
-	err = svgString.Execute(&svgBuffer, data)
+	var buf bytes.Buffer
+	err := svgTpl.Execute(&buf, params)
 	if err != nil {
 		return "", err
 	}
 
 	_ = os.MkdirAll(dirname, 0755)
-	err = os.WriteFile(filename, svgBuffer.Bytes(), 0644)
+	err = os.WriteFile(filename, buf.Bytes(), 0644)
 	if err != nil {
 		return "", fmt.Errorf("write SVG: %w", err)
 	}
