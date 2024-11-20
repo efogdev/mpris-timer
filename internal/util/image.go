@@ -72,7 +72,7 @@ func MakeProgressCircle(progress float64) (string, error) {
 		DashOffset:        dashOffset,
 		HasShadow:         Overrides.HasShadow,
 		HasRoundedCorners: Overrides.Rounded,
-		RoundedOffset:     roundedOffset,
+		RoundedOrigin:     roundedOrigin,
 		Progress:          int(progress),
 	}
 

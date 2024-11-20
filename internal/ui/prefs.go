@@ -471,8 +471,8 @@ func RenderPresets(toAdd []string) {
 }
 
 func renderPreview(box *gtk.Image) {
-	tickFor := time.Second * 7                 // 7 seconds timer
-	ticker := time.NewTicker(time.Second / 45) // 45 base fps
+	tickFor := time.Second * 7                 // 5 seconds timer
+	ticker := time.NewTicker(time.Second / 30) // 30 base fps
 	defer ticker.Stop()
 
 	go func() {
@@ -484,6 +484,10 @@ func renderPreview(box *gtk.Image) {
 
 	timeStart := time.Now()
 	for range ticker.C {
+		if prefsWin == nil || !prefsWin.IsVisible() || box == nil {
+			continue
+		}
+
 		timePassed := time.Since(timeStart).Microseconds()
 		percent := float64(timePassed) / float64(tickFor.Microseconds()) * 100
 
@@ -498,7 +502,7 @@ func renderPreview(box *gtk.Image) {
 		}
 
 		img := gtk.NewImageFromFile(imgFilename)
-		if img == nil || box == nil {
+		if img == nil {
 			continue
 		}
 

@@ -16,7 +16,7 @@ const (
 	height        = 128
 	padding       = 8
 	strokeWidth   = 16
-	roundedOffset = -84 // origin is -90
+	roundedOrigin = -84 // -90 is top center. this looks better IMO
 	bgStrokeColor = "#535353"
 )
 
@@ -33,7 +33,7 @@ const svgTemplate = `
   <circle id="progress"
 		cx="{{.CenterX}}" cy="{{.CenterY}}" r="{{.Radius}}" fill="none" stroke="{{.FgStrokeColor}}"
 		stroke-width="{{.StrokeWidth}}" stroke-dasharray="{{.Circumference}}" stroke-dashoffset="{{.DashOffset}}"
-		transform="rotate({{if .HasRoundedCorners}}{{.RoundedOffset}}{{else}}-90{{end}} {{.CenterX}} {{.CenterY}})"
+		transform="rotate({{if .HasRoundedCorners}}{{.RoundedOrigin}}{{else}}-90{{end}} {{.CenterX}} {{.CenterY}})"
 		{{if .HasRoundedCorners}} stroke-linecap="round"{{end}}
 	/>
 </svg>`
@@ -57,7 +57,7 @@ type svgParams struct {
 	DashOffset        float64
 	HasShadow         bool
 	HasRoundedCorners bool
-	RoundedOffset     int
+	RoundedOrigin     int
 	Progress          int
 }
 

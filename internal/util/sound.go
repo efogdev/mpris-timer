@@ -50,7 +50,8 @@ func playSilence(ms int) {
 
 	ctx, ready, err := oto.NewContext(sampleRate, 2, 2)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
+		return
 	}
 	<-ready
 

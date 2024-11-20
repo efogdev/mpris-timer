@@ -130,8 +130,7 @@ func (p *TimerPlayer) tick() {
 
 			elapsed := time.Since(p.startTime) - p.pausedFor
 			progress := math.Min(100, (float64(elapsed)/float64(p.duration))*100)
-
-			if progress >= 100 {
+			if progress == 100 {
 				p.Done <- struct{}{}
 				return
 			}
@@ -143,18 +142,16 @@ func (p *TimerPlayer) tick() {
 				continue
 			}
 
-			metadata := map[string]dbus.Variant{
-				"mpris:trackid": dbus.MakeVariant(dbus.ObjectPath("/track/1")),
-				"xesam:title":   dbus.MakeVariant(p.Name),
-				"xesam:artist":  dbus.MakeVariant([]string{util.FormatDuration(timeLeft)}),
-				"mpris:artUrl":  dbus.MakeVariant("file://" + progressImg),
-			}
-
 			p.emitter <- PropsChangedEvent{
 				iface: "org.mpris.MediaPlayer2.Player",
 				props: map[string]dbus.Variant{
-					"Metadata":       dbus.MakeVariant(metadata),
 					"PlaybackStatus": dbus.MakeVariant(p.playbackStatus),
+					"Metadata": dbus.MakeVariant(map[string]dbus.Variant{
+						"mpris:trackid": dbus.MakeVariant(dbus.ObjectPath("/track/1")),
+						"xesam:title":   dbus.MakeVariant(p.Name),
+						"xesam:artist":  dbus.MakeVariant([]string{util.FormatDuration(timeLeft)}),
+						"mpris:artUrl":  dbus.MakeVariant("file://" + progressImg),
+					}),
 				},
 			}
 		}
@@ -178,12 +175,14 @@ func (p *TimerPlayer) PlayPause() *dbus.Error {
 	} else {
 		p.pausedAt = time.Now()
 	}
+
 	p.isPaused = !p.isPaused
 	p.playbackStatus = map[bool]string{true: "Paused", false: "Playing"}[p.isPaused]
 
 	p.emitPropertiesChanged("org.mpris.MediaPlayer2.Player", map[string]dbus.Variant{
 		"PlaybackStatus": dbus.MakeVariant(p.playbackStatus),
 	})
+
 	return nil
 }
 
@@ -246,6 +245,6 @@ func (p *TimerPlayer) GetAll(iface string) (map[string]dbus.Variant, *dbus.Error
 	return props, nil
 }
 
-func (p *TimerPlayer) Set(iface, prop string, value dbus.Variant) *dbus.Error {
+func (p *TimerPlayer) Set(_, _ string, _ dbus.Variant) *dbus.Error {
 	return nil
 }
