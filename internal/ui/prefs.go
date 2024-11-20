@@ -470,12 +470,20 @@ func RenderPresets(toAdd []string) {
 	}
 }
 
+// ToDo: investigate
+//
+//   - memory leak
+//   - occasional freezes and crashes
 func renderPreview(box *gtk.Image) {
-	tickFor := time.Second * 7                 // 5 seconds timer
+	tickFor := time.Second * 5                 // 5 seconds timer
 	ticker := time.NewTicker(time.Second / 30) // 30 base fps
 	defer ticker.Stop()
 
 	go func() {
+		if prefsWin == nil {
+			return
+		}
+
 		prefsWin.ConnectCloseRequest(func() bool {
 			ticker.Stop()
 			return false
@@ -484,13 +492,12 @@ func renderPreview(box *gtk.Image) {
 
 	timeStart := time.Now()
 	for range ticker.C {
-		if prefsWin == nil || !prefsWin.IsVisible() || box == nil {
+		if prefsWin == nil || box == nil || !prefsWin.IsVisible() {
 			continue
 		}
 
 		timePassed := time.Since(timeStart).Microseconds()
 		percent := float64(timePassed) / float64(tickFor.Microseconds()) * 100
-
 		if percent >= 100 {
 			timeStart = time.Now()
 			continue
@@ -499,6 +506,7 @@ func renderPreview(box *gtk.Image) {
 		imgFilename, err := util.MakeProgressCircle(percent)
 		if err != nil {
 			log.Printf("render preview: %v", err)
+			continue
 		}
 
 		img := gtk.NewImageFromFile(imgFilename)
@@ -511,6 +519,11 @@ func renderPreview(box *gtk.Image) {
 			continue
 		}
 
-		box.SetFromPaintable(paintable)
+		curImg := paintable.CurrentImage()
+		if curImg == nil {
+			continue
+		}
+
+		box.SetFromPaintable(curImg)
 	}
 }

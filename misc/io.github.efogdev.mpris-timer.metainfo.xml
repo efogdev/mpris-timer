@@ -12,6 +12,17 @@
 	<summary>Native-feeling timers for GNOME</summary>
 	<content_rating type="oars-1.1" />
 	<releases>
+		<release date="2024-11-20" version="v1.1">
+			<description>
+				<p>Release 1.1: new UI, better settings</p>
+				<ul>
+					<li>Editable title in UI</li>
+					<li>Progress preview in preferences</li>
+					<li>Refined presets list</li>
+				</ul>
+			</description>
+		</release>
+		
 		<release date="2024-11-17" version="v1.0">
 			<description>
 				<p>Release 1.0.1: massive performance optimization, small bugfixes, little improvements</p>
@@ -52,7 +63,7 @@
 	</releases>
 	
 	<metadata_license>MIT</metadata_license>
-	<project_license>MITNFA</project_license>
+	<project_license>MIT</project_license>
 
 	<supports>
 		<control>pointing</control>
@@ -77,15 +88,15 @@
 	<screenshots>
 		<screenshot type="default">
 			<caption>The app</caption>
-			<image>https://github.com/user-attachments/assets/3a6f6eb8-8e5f-4c16-a801-6e346bd4d100</image>
+			<image></image>
 		</screenshot>
 		<screenshot>
 			<caption>Active timers</caption>
-			<image>https://github.com/user-attachments/assets/e26d5936-dd42-483a-a53c-29329c32ed85</image>
+			<image></image>
 		</screenshot>
 		<screenshot>
 			<caption>Preferences</caption>
-			<image>https://github.com/user-attachments/assets/70564f4c-995d-4b00-842b-bdfa10594158</image>
+			<image></image>
 		</screenshot>
 	</screenshots>
 	
