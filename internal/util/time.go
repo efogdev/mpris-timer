@@ -24,7 +24,7 @@ func TimeFromPreset(preset string) time.Time {
 		}
 		return result
 	default:
-		log.Fatalf("parse preset %s: too many parts", preset)
+		log.Printf("parse preset %s: too many parts", preset)
 		return time.Time{}
 	}
 }
@@ -32,7 +32,8 @@ func TimeFromPreset(preset string) time.Time {
 func TimeFromParts(hours int, minutes int, seconds int) time.Time {
 	result, err := time.Parse("15:04:05", fmt.Sprintf("%02d:%02d:%02d", hours, minutes, seconds))
 	if err != nil {
-		log.Fatalf("parse parts %d %d %d: %v", hours, minutes, seconds, err)
+		log.Printf("parse parts %d %d %d: %v", hours, minutes, seconds, err)
+		return time.Time{}
 	}
 
 	return result
@@ -41,17 +42,20 @@ func TimeFromParts(hours int, minutes int, seconds int) time.Time {
 func TimeFromStrings(hours string, minutes string, seconds string) time.Time {
 	hoursInt, err := strconv.Atoi(hours)
 	if err != nil {
-		log.Fatalf("parse hours %s: %v", hours, err)
+		log.Printf("parse hours %s: %v", hours, err)
+		return time.Time{}
 	}
 
 	minutesInt, err := strconv.Atoi(minutes)
 	if err != nil {
-		log.Fatalf("parse minutes %s: %v", minutes, err)
+		log.Printf("parse minutes %s: %v", minutes, err)
+		return time.Time{}
 	}
 
 	secondsInt, err := strconv.Atoi(seconds)
 	if err != nil {
-		log.Fatalf("parse seconds %s: %v", seconds, err)
+		log.Printf("parse seconds %s: %v", seconds, err)
+		return time.Time{}
 	}
 
 	return TimeFromParts(hoursInt, minutesInt, secondsInt)
@@ -59,7 +63,8 @@ func TimeFromStrings(hours string, minutes string, seconds string) time.Time {
 
 func NumToLabelText(num int) string {
 	if num > 59 || num < 0 {
-		log.Fatalf("NumToLabelText: num must be between 0 and 59")
+		log.Printf("NumToLabelText: num must be between 0 and 59")
+		return "00"
 	}
 
 	return fmt.Sprintf("%02d", num)

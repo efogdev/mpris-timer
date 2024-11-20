@@ -12,6 +12,15 @@
 	<summary>Native-feeling timers for GNOME</summary>
 	<content_rating type="oars-1.1" />
 	<releases>
+		<release date="2024-11-20" version="v1.2">
+			<description>
+				<p>Release 1.1: multi-instance hotfix</p>
+				<ul>
+					<li>Fixed a bug where only one timer can be set a a time</li>
+				</ul>
+			</description>
+		</release>
+		
 		<release date="2024-11-20" version="v1.1">
 			<description>
 				<p>Release 1.1: new UI, better settings</p>
@@ -88,15 +97,15 @@
 	<screenshots>
 		<screenshot type="default">
 			<caption>The app</caption>
-			<image>https://github.com/user-attachments/assets/c41de509-23cc-4cf4-a989-a018b4e09a11</image>
+			<image>https://github.com/user-attachments/assets/cb680714-5b62-4044-adda-b17794d59a5a</image>
 		</screenshot>
 		<screenshot>
 			<caption>Active timers</caption>
-			<image>https://github.com/user-attachments/assets/e26d5936-dd42-483a-a53c-29329c32ed85</image>
+			<image>https://github.com/user-attachments/assets/926d47ef-afa2-4190-aada-a09bdb499f59</image>
 		</screenshot>
 		<screenshot>
 			<caption>Preferences</caption>
-			<image>https://github.com/user-attachments/assets/7bb9f361-abba-4843-9be7-7074b6b8d253</image>
+			<image>https://github.com/user-attachments/assets/55396255-d1e1-4c49-9201-b8c9aab0b93f</image>
 		</screenshot>
 	</screenshots>
 	
