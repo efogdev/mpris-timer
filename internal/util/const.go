@@ -6,7 +6,6 @@ import (
 	"path"
 	"path/filepath"
 	"strings"
-	"text/template"
 )
 
 const (
@@ -17,7 +16,7 @@ const (
 	height        = 128
 	padding       = 8
 	strokeWidth   = 16
-	roundedOffset = -82 // origin is -90
+	roundedOffset = -84 // origin is -90
 	bgStrokeColor = "#535353"
 )
 
@@ -38,11 +37,6 @@ const svgTemplate = `
 		{{if .HasRoundedCorners}} stroke-linecap="round"{{end}}
 	/>
 </svg>`
-
-var funcMap = template.FuncMap{
-	"div": func(a, b int) int { return a / b },
-	"sub": func(a, b int) int { return a - b },
-}
 
 var (
 	CacheDir string

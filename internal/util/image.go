@@ -45,6 +45,9 @@ func MakeProgressCircle(progress float64) (string, error) {
 	cacheMu.RUnlock()
 
 	if _, err := os.Stat(filename); err == nil {
+		cacheMu.Lock()
+		cache[filename] = struct{}{}
+		cacheMu.Unlock()
 		return filename, nil
 	}
 
@@ -73,7 +76,7 @@ func MakeProgressCircle(progress float64) (string, error) {
 		Progress:          int(progress),
 	}
 
-	svgString, err := tpl.Funcs(funcMap).Parse(svgTemplate)
+	svgString, err := tpl.Parse(svgTemplate)
 	if err != nil {
 		return "", err
 	}
@@ -90,11 +93,15 @@ func MakeProgressCircle(progress float64) (string, error) {
 		return "", fmt.Errorf("write SVG: %w", err)
 	}
 
+	cacheMu.Lock()
+	cache[filename] = struct{}{}
+	cacheMu.Unlock()
+
 	return filename, nil
 }
 
 func walk(filename string) {
-	err := filepath.Walk(filename, func(path string, info os.FileInfo, err error) error {
+	_ = filepath.Walk(filename, func(path string, info os.FileInfo, err error) error {
 		if err != nil || filename == path {
 			return err
 		}
@@ -109,9 +116,4 @@ func walk(filename string) {
 
 		return nil
 	})
-
-	if err != nil {
-		fmt.Printf("checking cache dir: %v\n", err)
-		return
-	}
 }

@@ -473,6 +473,7 @@ func RenderPresets(toAdd []string) {
 func renderPreview(box *gtk.Image) {
 	tickFor := time.Second * 7                 // 7 seconds timer
 	ticker := time.NewTicker(time.Second / 45) // 45 base fps
+	defer ticker.Stop()
 
 	go func() {
 		prefsWin.ConnectCloseRequest(func() bool {
@@ -501,6 +502,11 @@ func renderPreview(box *gtk.Image) {
 			continue
 		}
 
-		box.SetFromPaintable(img.Paintable())
+		paintable := img.Paintable()
+		if paintable == nil {
+			continue
+		}
+
+		box.SetFromPaintable(paintable)
 	}
 }

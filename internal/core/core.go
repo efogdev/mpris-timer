@@ -121,6 +121,7 @@ func (p *TimerPlayer) tick() {
 		select {
 		case <-p.tickerDone:
 			p.Done <- struct{}{}
+			p.Destroy()
 			return
 		case <-ticker.C:
 			if p.isPaused {

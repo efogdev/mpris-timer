@@ -58,13 +58,11 @@ func main() {
 	select {
 	case <-timer.Done:
 		log.Println("timer done")
-
-		timer.Destroy()
 		wg := sync.WaitGroup{}
 
 		if util.Overrides.Notify {
 			wg.Add(1)
-			log.Printf("desktop notification requested")
+			log.Printf("notification requested")
 			go func() {
 				ui.Notify(timer.Name, util.Overrides.Text)
 				wg.Done()
@@ -77,7 +75,7 @@ func main() {
 			go func() {
 				err = util.PlaySound(false)
 				if err != nil {
-					log.Printf("playing sound file: %v", err)
+					log.Printf("playing sound: %v", err)
 				}
 				wg.Done()
 			}()
@@ -90,7 +88,7 @@ func main() {
 }
 
 func profile() func() {
-	if !slices.Contains(os.Args, "profile") {
+	if !slices.Contains(os.Args, "pprof") {
 		return nil
 	}
 
