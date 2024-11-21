@@ -21,7 +21,10 @@ const (
 	sliderWidth        = 175
 )
 
-var prefsWin *adw.Window
+var (
+	prefsWin     *adw.Window
+	previewImage *gtk.Image
+)
 
 func NewPrefsWindow() {
 	prefsWin = adw.NewWindow()
@@ -70,6 +73,10 @@ func NewPrefsWindow() {
 	prefsWin.SetVisible(true)
 	prefsWin.Activate()
 	prefsWin.GrabFocus()
+
+	// ToDo debug freezes w/o this
+	<-time.After(20 * time.Millisecond)
+	go renderPreview(previewImage)
 }
 
 var (
@@ -97,7 +104,7 @@ func NewPrefsWidgets(parent *gtk.Box) {
 	previewBox.SetHAlign(gtk.AlignEnd)
 	previewBox.SetMarginTop(40)
 
-	previewImage := gtk.NewImage()
+	previewImage = gtk.NewImage()
 	previewImage.SetSizeRequest(128, 128)
 
 	previewBox.Append(previewImage)
@@ -107,7 +114,7 @@ func NewPrefsWidgets(parent *gtk.Box) {
 	presetsGroup.SetTitle("Interface")
 
 	populateTimerGroup(timerGroup)
-	populateVisualsGroup(visualsGroup, previewImage)
+	populateVisualsGroup(visualsGroup)
 	populatePresetsGroup(presetsGroup)
 
 	parent.Append(timerGroup)
@@ -192,9 +199,7 @@ func populateTimerGroup(group *adw.PreferencesGroup) {
 	group.Add(textEntry)
 }
 
-func populateVisualsGroup(group *adw.PreferencesGroup, previewImage *gtk.Image) {
-	go renderPreview(previewImage)
-
+func populateVisualsGroup(group *adw.PreferencesGroup) {
 	color, err := util.RGBAFromHex(util.Overrides.Color)
 	if err != nil {
 		log.Fatalf("unexpected: nil color, %v (%s)", err, util.UserPrefs.ProgressColor)
@@ -467,63 +472,5 @@ func RenderPresets(toAdd []string) {
 		row.SetChild(box)
 		row.SetActivatableWidget(title)
 		presetsBox.Append(container)
-	}
-}
-
-// ToDo: investigate
-//
-//   - memory leak
-//   - occasional freezes and crashes
-func renderPreview(box *gtk.Image) {
-	tickFor := time.Second * 5                 // 5 seconds timer
-	ticker := time.NewTicker(time.Second / 30) // 30 base fps
-	defer ticker.Stop()
-
-	go func() {
-		if prefsWin == nil {
-			return
-		}
-
-		prefsWin.ConnectCloseRequest(func() bool {
-			ticker.Stop()
-			return false
-		})
-	}()
-
-	timeStart := time.Now()
-	for range ticker.C {
-		if prefsWin == nil || box == nil || !prefsWin.IsVisible() {
-			continue
-		}
-
-		timePassed := time.Since(timeStart).Microseconds()
-		percent := float64(timePassed) / float64(tickFor.Microseconds()) * 100
-		if percent >= 100 {
-			timeStart = time.Now()
-			continue
-		}
-
-		imgFilename, err := util.MakeProgressCircle(percent)
-		if err != nil {
-			log.Printf("render preview: %v", err)
-			continue
-		}
-
-		img := gtk.NewImageFromFile(imgFilename)
-		if img == nil {
-			continue
-		}
-
-		paintable := img.Paintable()
-		if paintable == nil {
-			continue
-		}
-
-		curImg := paintable.CurrentImage()
-		if curImg == nil {
-			continue
-		}
-
-		box.SetFromPaintable(curImg)
 	}
 }
