@@ -14,6 +14,9 @@ import (
 const (
 	baseFPS      = 30
 	baseInterval = time.Second / baseFPS
+
+	// low fps for Plasma because it flickers otherwise
+	plasmaCoef = 5 // plasmaFPS = baseFPS / plasmaCoef
 )
 
 type PropsChangedEvent struct {
@@ -89,6 +92,11 @@ func (p *TimerPlayer) Start() error {
 func (p *TimerPlayer) Destroy() {
 	_ = p.conn.Close()
 	close(p.emitter)
+
+	if p.Done != nil {
+		p.Done <- struct{}{}
+	}
+
 	close(p.Done)
 }
 
@@ -118,10 +126,11 @@ func (p *TimerPlayer) tick() {
 	ticker := time.NewTicker(p.interval)
 	defer ticker.Stop()
 
+	var img string
+	var idx int
 	for {
 		select {
 		case <-p.tickerDone:
-			p.Done <- struct{}{}
 			p.Destroy()
 			return
 		case <-ticker.C:
@@ -132,7 +141,7 @@ func (p *TimerPlayer) tick() {
 			elapsed := time.Since(p.startTime) - p.pausedFor
 			progress := math.Min(100, (float64(elapsed)/float64(p.duration))*100)
 			if progress == 100 {
-				p.Done <- struct{}{}
+				p.Destroy()
 				return
 			}
 
@@ -143,6 +152,11 @@ func (p *TimerPlayer) tick() {
 				continue
 			}
 
+			idx++
+			if !util.IsPlasma || (util.IsPlasma && idx%plasmaCoef == 0) {
+				img = "file://" + progressImg
+			}
+
 			p.emitter <- PropsChangedEvent{
 				iface: "org.mpris.MediaPlayer2.Player",
 				props: map[string]dbus.Variant{
@@ -151,7 +165,7 @@ func (p *TimerPlayer) tick() {
 						"mpris:trackid": dbus.MakeVariant(dbus.ObjectPath("/track/1")),
 						"xesam:title":   dbus.MakeVariant(p.Name),
 						"xesam:artist":  dbus.MakeVariant([]string{util.FormatDuration(timeLeft)}),
-						"mpris:artUrl":  dbus.MakeVariant("file://" + progressImg),
+						"mpris:artUrl":  dbus.MakeVariant(img),
 					}),
 				},
 			}

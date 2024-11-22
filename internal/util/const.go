@@ -41,6 +41,7 @@ const svgTemplate = `
 </svg>`
 
 var (
+	IsPlasma bool
 	CacheDir string
 	DataDir  string
 	svgTpl   *template.Template
@@ -65,6 +66,8 @@ type svgParams struct {
 }
 
 func init() {
+	IsPlasma = os.Getenv("XDG_CURRENT_DESKTOP") == "KDE"
+
 	var err error
 	svgTpl, err = tpl.Parse(svgTemplate)
 	if err != nil {

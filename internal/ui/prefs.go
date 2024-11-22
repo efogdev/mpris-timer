@@ -150,7 +150,7 @@ func populateTimerGroup(group *adw.PreferencesGroup) {
 	volumeSlider.SetValue(util.Overrides.Volume * 100)
 	volumeSlider.SetSizeRequest(sliderWidth, 0)
 	volumeSlider.ConnectChangeValue(func(scroll gtk.ScrollType, value float64) (ok bool) {
-		// GTK (probably) bug, with mouse wheel scale goes up to 110
+		// GTK (probably) bug, scale goes up to 110 when using mouse wheel
 		if value > 100 {
 			value = 100
 			volumeSlider.SetValue(value)
