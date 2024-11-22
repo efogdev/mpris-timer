@@ -104,7 +104,7 @@
 			Use navigation keys (arrows, tab, shift+tab, space, enter) or start inputting numbers right away.
 		</p>
 		<p>
-			<pre>
+			<code>
 				CLI use:
 					-ui
 						Show timepicker UI (default true)
@@ -132,7 +132,7 @@
 				Example: 
 				  flatpak run io.github.efogdev.mpris-timer -title="Oven" -color="#f00"   
 				  flatpak run io.github.efogdev.mpris-timer -title="Automated" -start=20    
-			</pre>
+			</code>
 		</p>
 	</description>
 
