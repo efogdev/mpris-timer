@@ -12,6 +12,12 @@
 	<summary>Native-feeling timers</summary>
 	<content_rating type="oars-1.1" />
 	<releases>
+		<release date="2024-11-24" version="v1.4.1">
+			<description>
+				<p>Release 1.4.1: technical (pretty metainfo)</p>
+			</description>
+		</release>
+		
 		<release date="2024-11-22" version="v1.4">
 			<description>
 				<p>Release 1.4: KDE Plasma support</p>
@@ -95,7 +101,7 @@
 
 	<description>
 		<p>
-			Timer app with seamless DE integration accomplished by pretending to be a media player.
+			Timer app with seamless integration accomplished by pretending to be a media player.
 			Ultimately, serves the only purpose — to start a timer quickly and efficiently.
 			Notifications included! 
 		</p>
@@ -104,7 +110,7 @@
 			Use navigation keys (arrows, tab, shift+tab, space, enter) or start inputting numbers right away.
 		</p>
 		<p>
-			The app might be used in CLI mode without any GUI, try `flatpak run io.github.efogdev.mpris-timer -help`!
+			The app is CLI-friendly, try `flatpak run io.github.efogdev.mpris-timer -help`!
 		</p>
 	</description>
 
@@ -115,8 +121,12 @@
 			<image>https://github.com/user-attachments/assets/cb680714-5b62-4044-adda-b17794d59a5a</image>
 		</screenshot>
 		<screenshot>
-			<caption>Active timers</caption>
+			<caption>Play Timer on GNOME</caption>
 			<image>https://github.com/user-attachments/assets/926d47ef-afa2-4190-aada-a09bdb499f59</image>
+		</screenshot>
+		<screenshot>
+			<caption>Play Timer on Plasma</caption>
+			<image>https://github.com/user-attachments/assets/3c8d7055-e10b-4730-8468-590ab080f643</image>
 		</screenshot>
 		<screenshot>
 			<caption>Preferences</caption>
