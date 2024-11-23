@@ -104,35 +104,7 @@
 			Use navigation keys (arrows, tab, shift+tab, space, enter) or start inputting numbers right away.
 		</p>
 		<p>
-			<code>
-				CLI use:
-					-ui
-						Show timepicker UI (default true)
-					-start int
-						Start the timer immediately, don't show UI
-					-color string
-						Progress color (#HEX) for the player, use "default" for the GTK accent color (default "default")
-					-notify
-						Send desktop notification (default true)
-					-rounded
-						Rounded corners (default true)
-					-shadow
-						Shadow for progress image
-					-sound
-						Play sound (default true)
-					-text string
-						Notification text (default "Time is up!")
-					-title string
-						Name/title of the timer (default "Timer")
-					-volume float
-						Volume [0-1] (default 1)
-					-silence int
-						Play this milliseconds of silence before the actual sound — might be helpful for audio devices that wake up not immediately
-				
-				Example: 
-				  flatpak run io.github.efogdev.mpris-timer -title="Oven" -color="#f00"   
-				  flatpak run io.github.efogdev.mpris-timer -title="Automated" -start=20    
-			</code>
+			The app might be used in CLI mode without any GUI, try `flatpak run io.github.efogdev.mpris-timer -help`!
 		</p>
 	</description>
 
