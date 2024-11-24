@@ -61,15 +61,20 @@ flatpak run io.github.efogdev.mpris-timer -title Tea -rounded=0 -sound=0 -start 
 
 ## Development
 
-Run:
+Install gsettings schema (the app with crash on start otherwise):
+```shell
+sudo cp misc/io.github.efogdev.mpris-timer.gschema.xml /usr/share/glib-2.0/schemas/
+sudo glib-compile-schemas /usr/share/glib-2.0/schemas/
+```
 
+Run:
 ```shell
 go run cmd/main.go -help
 ```
 
 Build:
 ```shell
-go build -pgo default.pgo -tags wayland -ldflags="-s -w" -o ./.bin/app ./cmd/main.go
+go build -tags wayland -o ./.bin/app ./cmd/main.go
 ```
 
 Flatpak:

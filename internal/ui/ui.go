@@ -15,9 +15,10 @@ import (
 var cssString string
 
 const (
-	minWidth      = 350
-	minHeight     = 200
-	collapseWidth = 460
+	minWidth         = 350
+	defaultMinHeight = 195
+	noTitleMinHeight = 170
+	collapseWidth    = 460
 )
 
 var (
@@ -79,7 +80,7 @@ func NewTimePicker(app *adw.Application) {
 	win.AddController(escCtrl)
 	win.SetContent(handle)
 	win.SetTitle(util.AppName)
-	win.SetSizeRequest(minWidth, minHeight)
+	win.SetSizeRequest(minWidth, getMinHeight())
 	win.SetDefaultSize(int(util.UserPrefs.WindowWidth), int(util.UserPrefs.WindowHeight))
 
 	win.ConnectCloseRequest(func() (ok bool) {
@@ -207,7 +208,7 @@ func NewSidebar() *adw.NavigationPage {
 	scrolledWindow := gtk.NewScrolledWindow()
 	scrolledWindow.SetVExpand(true)
 	scrolledWindow.SetOverlayScrolling(true)
-	scrolledWindow.SetMinContentHeight(minHeight)
+	scrolledWindow.SetMinContentHeight(getMinHeight())
 	scrolledWindow.SetChild(flowBox)
 
 	kbCtrl := gtk.NewEventControllerKey()
@@ -408,8 +409,17 @@ func NewContent() *adw.NavigationPage {
 	return content
 }
 
+func getMinHeight() int {
+	height := defaultMinHeight
+	if !util.UserPrefs.ShowTitle {
+		height = noTitleMinHeight
+	}
+
+	return height
+}
+
 func saveSize() {
-	if util.UserPrefs.RememberWindowSize {
+	if util.UserPrefs.RememberWinSize {
 		util.SetWindowSize(uint(win.Width()), uint(win.Height()))
 	}
 }

@@ -22,7 +22,7 @@ var Overrides = struct {
 }{}
 
 func LoadFlags() {
-	flag.BoolVar(&Overrides.Notify, "notify", UserPrefs.EnableNotification, "Send desktop notification")
+	flag.BoolVar(&Overrides.Notify, "notify", UserPrefs.ShouldNotify, "Send desktop notification")
 	flag.BoolVar(&Overrides.Sound, "sound", UserPrefs.EnableSound, "Play sound")
 	flag.Float64Var(&Overrides.Volume, "volume", UserPrefs.Volume, "Volume [0-1]")
 	flag.IntVar(&Overrides.Silence, "silence", 0, "Play this milliseconds of silence before the actual sound — might be helpful for audio devices that wake up not immediately")

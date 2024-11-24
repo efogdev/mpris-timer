@@ -48,7 +48,6 @@ func NewTimerPlayer(seconds int, name string) (*TimerPlayer, error) {
 	fps := util.CalculateFps()
 	interval := baseInterval
 	if time.Second*time.Duration(seconds) > lowPresicionAfter {
-		// low precision mode
 		log.Printf("low precision requested, duration > %d", lowPresicionAfter)
 		interval += interval / 2
 	}
@@ -87,7 +86,7 @@ func (p *TimerPlayer) Start() error {
 
 	p.startTime = time.Now()
 	go p.runTicker()
-	go p.emit()
+	go p.emitLoop()
 
 	return nil
 }
@@ -153,7 +152,7 @@ func (p *TimerPlayer) runTicker() {
 	}
 }
 
-func (p *TimerPlayer) emit() {
+func (p *TimerPlayer) emitLoop() {
 	var prev *PropsChangedEvent
 
 	for e := range p.emitter {
@@ -195,7 +194,7 @@ func (p *TimerPlayer) emitPropertiesChanged(iface string, changed map[string]dbu
 	err := p.conn.Emit(p.objectPath, "org.freedesktop.DBus.Properties.PropertiesChanged",
 		iface, changed, []string{})
 	if err != nil {
-		log.Printf("emit properties: %v", err)
+		log.Printf("emitLoop properties: %v", err)
 	}
 }
 

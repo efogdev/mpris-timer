@@ -27,6 +27,10 @@ var (
 )
 
 func NewPrefsWindow() {
+	if prefsWin != nil {
+		return
+	}
+
 	prefsWin = adw.NewWindow()
 	prefsWin.SetTitle("Preferences")
 	prefsWin.SetSizeRequest(prefsMinWidth, prefsMinHeight)
@@ -163,7 +167,7 @@ func populateTimerGroup(group *adw.PreferencesGroup) {
 
 	notificationSwitch := adw.NewSwitchRow()
 	notificationSwitch.SetTitle("Enable notification")
-	notificationSwitch.SetActive(util.UserPrefs.EnableNotification)
+	notificationSwitch.SetActive(util.UserPrefs.ShouldNotify)
 	notificationSwitch.Connect("notify::active", func() {
 		util.SetEnableNotification(notificationSwitch.Active())
 		textEntry.SetSensitive(notificationSwitch.Active())
@@ -186,7 +190,7 @@ func populateTimerGroup(group *adw.PreferencesGroup) {
 
 	textEntry.SetTitle("Default notification text")
 	textEntry.SetText(util.UserPrefs.DefaultText)
-	textEntry.SetSensitive(util.UserPrefs.EnableNotification)
+	textEntry.SetSensitive(util.UserPrefs.ShouldNotify)
 	textEntry.ConnectChanged(func() {
 		util.SetDefaultText(textEntry.Text())
 	})
@@ -258,7 +262,7 @@ func populatePresetsGroup(group *adw.PreferencesGroup) {
 
 	winSizeSwitch := adw.NewSwitchRow()
 	winSizeSwitch.SetTitle("Remember window size")
-	winSizeSwitch.SetActive(util.UserPrefs.RememberWindowSize)
+	winSizeSwitch.SetActive(util.UserPrefs.RememberWinSize)
 	winSizeSwitch.Connect("notify::active", func() {
 		util.SetRememberWindowSize(winSizeSwitch.Active())
 	})
