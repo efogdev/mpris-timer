@@ -12,6 +12,12 @@
 	<summary>Native-feeling timers</summary>
 	<content_rating type="oars-1.1" />
 	<releases>
+		<release date="2024-11-24" version="v1.5">
+			<description>
+				<p>Release 1.5: low FPS switch, performance optimizations</p>
+			</description>
+		</release>
+		
 		<release date="2024-11-24" version="v1.4.1">
 			<description>
 				<p>Release 1.4.1: technical (pretty metainfo)</p>

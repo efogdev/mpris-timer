@@ -13,7 +13,9 @@ import (
 const (
 	AppId   = "io.github.efogdev.mpris-timer"
 	AppName = "Play Timer"
+	BaseFPS = 30
 
+	plasmaFPS     = 6
 	width         = 128
 	height        = 128
 	padding       = 8
@@ -99,6 +101,19 @@ func init() {
 			return nil
 		})
 	}()
+}
+
+func CalculateFps() int {
+	fps := BaseFPS
+	if IsPlasma {
+		fps = plasmaFPS
+	}
+	if Overrides.LowFPS {
+		log.Println("low fps requested")
+		fps /= 2
+	}
+
+	return fps
 }
 
 func bool2int(b bool) int {

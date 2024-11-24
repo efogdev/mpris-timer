@@ -47,7 +47,7 @@ func main() {
 		log.Fatalf("create timer: %v", err)
 	}
 
-	log.Printf("timer requested: %d sec", util.Overrides.Duration)
+	log.Printf("timer requested, duration = %d sec", util.Overrides.Duration)
 	if err = timer.Start(); err != nil {
 		log.Fatalf("start timer: %v", err)
 	}

@@ -8,26 +8,25 @@ import (
 	"mpris-timer/internal/util"
 	"os"
 	"strconv"
+	"sync"
 	"time"
 )
 
 const (
-	baseFPS      = 30
-	baseInterval = time.Second / baseFPS
-
-	// low fps for Plasma because it flickers otherwise
-	plasmaCoef = 5 // plasmaFPS = baseFPS / plasmaCoef
+	baseInterval      = time.Millisecond * 5
+	lowPresicionAfter = time.Second * 300
 )
 
 type PropsChangedEvent struct {
-	iface string
-	props map[string]dbus.Variant
+	text string
+	img  string
 }
 
 type TimerPlayer struct {
 	Done           chan struct{}
 	Name           string
 	serviceName    string
+	fps            int
 	objectPath     dbus.ObjectPath
 	conn           *dbus.Conn
 	duration       time.Duration
@@ -46,9 +45,12 @@ func NewTimerPlayer(seconds int, name string) (*TimerPlayer, error) {
 		return nil, fmt.Errorf("duration must be positive")
 	}
 
+	fps := util.CalculateFps()
 	interval := baseInterval
-	if seconds > 300 {
-		interval = time.Second / (baseFPS / 1.5)
+	if time.Second*time.Duration(seconds) > lowPresicionAfter {
+		// low precision mode
+		log.Printf("low precision requested, duration > %d", lowPresicionAfter)
+		interval += interval / 2
 	}
 
 	return &TimerPlayer{
@@ -57,8 +59,9 @@ func NewTimerPlayer(seconds int, name string) (*TimerPlayer, error) {
 		objectPath:     "/org/mpris/MediaPlayer2",
 		playbackStatus: "Playing",
 		interval:       interval,
+		fps:            fps,
 		tickerDone:     make(chan struct{}),
-		emitter:        make(chan PropsChangedEvent),
+		emitter:        make(chan PropsChangedEvent, 1),
 		Done:           make(chan struct{}, 1),
 	}, nil
 }
@@ -83,7 +86,7 @@ func (p *TimerPlayer) Start() error {
 	}
 
 	p.startTime = time.Now()
-	go p.tick()
+	go p.runTicker()
 	go p.emit()
 
 	return nil
@@ -100,6 +103,78 @@ func (p *TimerPlayer) Destroy() {
 	close(p.Done)
 }
 
+func (p *TimerPlayer) runTicker() {
+	log.Printf("player requested, fps = %d", p.fps)
+
+	progress := 0.0
+	mu := sync.Mutex{}
+	img, _ := util.MakeProgressCircle(0)
+	img = "file://" + img
+
+	renderTicker := time.NewTicker(time.Duration(int64(time.Second) / int64(p.fps)))
+	defer renderTicker.Stop()
+	go func() {
+		for range renderTicker.C {
+			mu.Lock()
+			img, _ = util.MakeProgressCircle(progress)
+			img = "file://" + img
+			mu.Unlock()
+		}
+	}()
+
+	ticker := time.NewTicker(p.interval)
+	defer ticker.Stop()
+	for {
+		select {
+		case <-p.tickerDone:
+			p.Destroy()
+			return
+		case <-ticker.C:
+			if p.isPaused {
+				continue
+			}
+
+			elapsed := time.Since(p.startTime) - p.pausedFor
+			timeLeft := p.duration - elapsed
+
+			mu.Lock()
+			progress = math.Min(100, (float64(elapsed)/float64(p.duration))*100)
+			if progress == 100 {
+				p.Destroy()
+				return
+			}
+
+			p.emitter <- PropsChangedEvent{
+				text: util.FormatDuration(timeLeft),
+				img:  img,
+			}
+			mu.Unlock()
+		}
+	}
+}
+
+func (p *TimerPlayer) emit() {
+	var prev *PropsChangedEvent
+
+	for e := range p.emitter {
+		if prev != nil && prev.img == e.img && prev.text == e.text {
+			continue
+		}
+
+		p.emitPropertiesChanged("org.mpris.MediaPlayer2.Player", map[string]dbus.Variant{
+			"PlaybackStatus": dbus.MakeVariant(p.playbackStatus),
+			"Metadata": dbus.MakeVariant(map[string]dbus.Variant{
+				"mpris:trackid": dbus.MakeVariant(dbus.ObjectPath("/track/1")),
+				"xesam:title":   dbus.MakeVariant(p.Name),
+				"xesam:artist":  dbus.MakeVariant([]string{e.text}),
+				"mpris:artUrl":  dbus.MakeVariant(e.img),
+			}),
+		})
+
+		prev = &e
+	}
+}
+
 func (p *TimerPlayer) exportInterfaces() error {
 	if err := p.conn.Export(p, p.objectPath, "org.mpris.MediaPlayer2"); err != nil {
 		return err
@@ -114,63 +189,6 @@ func (p *TimerPlayer) exportInterfaces() error {
 	}
 
 	return nil
-}
-
-func (p *TimerPlayer) emit() {
-	for payload := range p.emitter {
-		p.emitPropertiesChanged(payload.iface, payload.props)
-	}
-}
-
-func (p *TimerPlayer) tick() {
-	ticker := time.NewTicker(p.interval)
-	defer ticker.Stop()
-
-	var img string
-	var idx int
-	for {
-		select {
-		case <-p.tickerDone:
-			p.Destroy()
-			return
-		case <-ticker.C:
-			if p.isPaused {
-				continue
-			}
-
-			elapsed := time.Since(p.startTime) - p.pausedFor
-			progress := math.Min(100, (float64(elapsed)/float64(p.duration))*100)
-			if progress == 100 {
-				p.Destroy()
-				return
-			}
-
-			timeLeft := p.duration - elapsed
-			progressImg, err := util.MakeProgressCircle(progress)
-			if err != nil {
-				log.Printf("create progress svg: %v", err)
-				continue
-			}
-
-			idx++
-			if !util.IsPlasma || (util.IsPlasma && idx%plasmaCoef == 0) {
-				img = "file://" + progressImg
-			}
-
-			p.emitter <- PropsChangedEvent{
-				iface: "org.mpris.MediaPlayer2.Player",
-				props: map[string]dbus.Variant{
-					"PlaybackStatus": dbus.MakeVariant(p.playbackStatus),
-					"Metadata": dbus.MakeVariant(map[string]dbus.Variant{
-						"mpris:trackid": dbus.MakeVariant(dbus.ObjectPath("/track/1")),
-						"xesam:title":   dbus.MakeVariant(p.Name),
-						"xesam:artist":  dbus.MakeVariant([]string{util.FormatDuration(timeLeft)}),
-						"mpris:artUrl":  dbus.MakeVariant(img),
-					}),
-				},
-			}
-		}
-	}
 }
 
 func (p *TimerPlayer) emitPropertiesChanged(iface string, changed map[string]dbus.Variant) {

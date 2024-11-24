@@ -23,29 +23,40 @@ Use navigation keys (arrows, tab, shift+tab, space, enter) or start inputting nu
 ## CLI use
 
 ```text
-Usage of mpris-timer:
-  -color string
-    	Progress color (#HEX) for the player, use "default" for the GTK accent color (default "default")
-  -notify
-    	Send desktop notification (default true)
-  -rounded
-    	Rounded corners (default true)
-  -shadow
-    	Shadow for progress image (default true)
-  -silence int
-    	Play this milliseconds of silence before the actual sound — might be helpful for audio devices that wake up not immediately
-  -sound
-    	Play sound (default true)
-  -start int
-    	Start the timer immediately, don't show UI
-  -text string
-    	Notification text (default "Time is up!")
-  -title string
-    	Name/title of the timer (default "Timer")
-  -ui
-    	Show timepicker UI (default true)
-  -volume float
-    	Volume [0-1] (default 1)
+-ui
+	Show timepicker UI (default true)
+-start int
+	Start the timer immediately, don't show UI
+-title string
+	Name/title of the timer (default "Timer")
+-text string
+	Notification text (default "Time is up!")
+-color string
+	Progress color (#HEX) for the player, use "default" to use accent color (default "default")
+-lowfps
+	Low fps (~3 for KDE, ~15 for GNOME). On Plasma, FPS > 6 causes flickering in the media player widget. Some may experience this even with FPS <= 6 
+-notify
+	Send desktop notification (default true)
+-rounded
+	Rounded corners (default true)
+-shadow
+	Shadow for progress image
+-silence int
+	Play this milliseconds of silence before the actual sound — might be helpful for audio devices that wake up not immediately
+-sound
+	Play sound (default true)
+-volume float
+	Volume [0-1] (default 1)
+```
+
+### Examples
+
+```shell
+# show UI for a red "Oven" timer
+flatpak run io.github.efogdev.mpris-timer -title Oven -color "#FF4200"  
+
+# start a 120s "Tea" timer immediately
+flatpak run io.github.efogdev.mpris-timer -title Tea -rounded=0 -sound=0 -start 120
 ```
 
 ## Development

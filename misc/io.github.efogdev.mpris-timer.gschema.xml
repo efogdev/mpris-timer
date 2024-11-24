@@ -57,8 +57,8 @@
 			<default>true</default>
 		</key>
 
-		<key name="cache-prefix" type="s">
-			<default>'default'</default>
+		<key name="low-fps" type="b">
+			<default>false</default>
 		</key>
 
 		<key name="volume" type="d">
@@ -71,6 +71,10 @@
 
 		<key name="window-height" type="u">
 			<default>205</default>
+		</key>
+
+		<key name="cache-prefix" type="s">
+			<default>'default'</default>
 		</key>
 		
 	</schema>

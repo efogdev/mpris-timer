@@ -32,7 +32,7 @@ var (
 )
 
 func Init() {
-	log.Println("UI init requested")
+	log.Println("UI window requested")
 
 	util.App.ConnectActivate(func() {
 		prov := gtk.NewCSSProvider()
@@ -277,11 +277,9 @@ func NewContent() *adw.NavigationPage {
 	titleBox.SetHExpand(true)
 	titleBox.Append(titleLabel)
 
-	log.Printf("show title: %v", util.UserPrefs.ShowTitle)
 	if util.UserPrefs.ShowTitle {
 		vBox.Append(titleBox)
 	}
-
 	vBox.Append(hBox)
 
 	hrsLabel = gtk.NewEntry()

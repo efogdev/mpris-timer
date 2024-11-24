@@ -23,6 +23,7 @@ type Prefs struct {
 	RememberWindowSize bool
 	Shadow             bool
 	Rounded            bool
+	LowFPS             bool
 	ShowTitle          bool
 	WindowWidth        uint
 	WindowHeight       uint
@@ -53,6 +54,7 @@ func LoadPrefs() {
 		RememberWindowSize: settings.Boolean("remember-window-size"),
 		Shadow:             settings.Boolean("shadow"),
 		Rounded:            settings.Boolean("rounded"),
+		LowFPS:             settings.Boolean("low-fps"),
 		ShowTitle:          settings.Boolean("show-title"),
 		WindowWidth:        settings.Uint("window-width"),
 		WindowHeight:       settings.Uint("window-height"),
@@ -125,6 +127,12 @@ func SetRounded(value bool) {
 func SetShowTitle(value bool) {
 	UserPrefs.ShowTitle = value
 	settings.SetBoolean("show-title", value)
+}
+
+func SetLowFPS(value bool) {
+	Overrides.LowFPS = value
+	UserPrefs.LowFPS = value
+	settings.SetBoolean("low-fps", value)
 }
 
 func SetProgressColor(value string) {

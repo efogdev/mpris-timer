@@ -233,9 +233,22 @@ func populateVisualsGroup(group *adw.PreferencesGroup) {
 		util.SetShadow(shadowSwitch.Active())
 	})
 
+	lowFPSSwitch := adw.NewSwitchRow()
+	lowFPSSwitch.SetTitle("Lower FPS")
+	lowFPSSwitch.SetSubtitleLines(2)
+	lowFPSSwitch.SetSubtitle(fmt.Sprintf("Does not affect preview\nCurrently: %d FPS", util.CalculateFps()))
+	lowFPSSwitch.SetHasTooltip(true)
+	lowFPSSwitch.SetTooltipText("On Plasma, FPS > 6 causes flickering in the media player widget. Some may experience this even with FPS <= 6.")
+	lowFPSSwitch.SetActive(util.UserPrefs.LowFPS)
+	lowFPSSwitch.Connect("notify::active", func() {
+		util.SetLowFPS(lowFPSSwitch.Active())
+		lowFPSSwitch.SetSubtitle(fmt.Sprintf("Does not affect preview\nCurrently: %d FPS", util.CalculateFps()))
+	})
+
 	group.Add(colorRow)
 	group.Add(roundedSwitch)
 	group.Add(shadowSwitch)
+	group.Add(lowFPSSwitch)
 }
 
 func populatePresetsGroup(group *adw.PreferencesGroup) {
