@@ -61,7 +61,7 @@ flatpak run io.github.efogdev.mpris-timer -title Tea -rounded=0 -sound=0 -start 
 
 ## Development
 
-Install gsettings schema (the app with crash on start otherwise):
+Install gsettings schema (the app will crash on start otherwise):
 ```shell
 sudo cp misc/io.github.efogdev.mpris-timer.gschema.xml /usr/share/glib-2.0/schemas/
 sudo glib-compile-schemas /usr/share/glib-2.0/schemas/
