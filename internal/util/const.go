@@ -26,10 +26,7 @@ const (
 
 const svgTemplate = `
 <svg width="{{.Width}}" height="{{.Height}}">
-  <style>
-	{{if .HasShadow}}#progress{filter: drop-shadow(-4px 7px 6px rgb(16 16 16 / 0.2));}{{end}}
-	{{if .HasRoundedCorners}}{{if ge .Progress 75}}#progress{border-radius: 4px;}{{end}}{{end}}
-	</style>
+  <style>{{if .HasShadow}}#progress{filter: drop-shadow(-4px 7px 6px rgb(16 16 16 / 0.2));}{{end}}</style>
   <circle
 		cx="{{.CenterX}}" cy="{{.CenterY}}" r="{{.Radius}}" fill="none" stroke="{{.BgStrokeColor}}"
 		stroke-width="{{.BaseWidth}}"{{if .HasRoundedCorners}} stroke-linecap="round"{{end}}
