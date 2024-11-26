@@ -73,7 +73,7 @@ func main() {
 			wg.Add(1)
 			log.Printf("sound requested")
 			go func() {
-				err = util.PlaySound(false)
+				err = util.PlaySound()
 				if err != nil {
 					log.Printf("playing sound: %v", err)
 				}

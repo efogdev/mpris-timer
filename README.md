@@ -26,7 +26,7 @@ Use navigation keys (arrows, tab, shift+tab, space, enter) or start inputting nu
 -ui
 	Show timepicker UI (default true)
 -start int
-	Start the timer immediately, don't show UI
+	Start the timer immediately, don't show UI (value in seconds)
 -title string
 	Name/title of the timer (default "Timer")
 -text string

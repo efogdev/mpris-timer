@@ -59,21 +59,21 @@ func MakeProgressCircle(progress float64) (string, error) {
 	dashOffset := circumference * (1 - progress/100)
 
 	params := svgParams{
-		Width:             width,
-		Height:            height,
-		CenterX:           centerX,
-		CenterY:           centerY,
-		Radius:            radius,
-		BaseWidth:         baseWidth,
-		StrokeWidth:       strokeWidth,
-		FgStrokeColor:     Overrides.Color,
-		BgStrokeColor:     bgStrokeColor,
-		Circumference:     circumference,
-		DashOffset:        dashOffset,
-		HasShadow:         Overrides.HasShadow,
-		HasRoundedCorners: Overrides.Rounded,
-		RoundedOrigin:     roundedOrigin,
-		Progress:          int(progress),
+		Width:         width,
+		Height:        height,
+		CenterX:       centerX,
+		CenterY:       centerY,
+		Radius:        radius,
+		BaseWidth:     baseWidth,
+		StrokeWidth:   strokeWidth,
+		FgStrokeColor: Overrides.Color,
+		BgStrokeColor: bgStrokeColor,
+		Circumference: circumference,
+		DashOffset:    dashOffset,
+		HasShadow:     Overrides.HasShadow,
+		Rounded:       Overrides.Rounded,
+		CustomOrigin:  roundedOrigin,
+		Progress:      int(progress),
 	}
 
 	var buf bytes.Buffer

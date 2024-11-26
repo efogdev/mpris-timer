@@ -36,6 +36,11 @@ func NewPrefsWindow() {
 	prefsWin.SetSizeRequest(prefsMinWidth, prefsMinHeight)
 	prefsWin.SetDefaultSize(prefsDefaultWidth, prefsDefaultHeight)
 
+	prefsWin.ConnectCloseRequest(func() bool {
+		prefsWin = nil
+		return false
+	})
+
 	escCtrl := gtk.NewEventControllerKey()
 	escCtrl.SetPropagationPhase(gtk.PhaseCapture)
 	escCtrl.ConnectKeyPressed(func(keyval, keycode uint, state gdk.ModifierType) (ok bool) {
@@ -142,7 +147,7 @@ func populateTimerGroup(group *adw.PreferencesGroup) {
 	volumePreviewCtrl := gtk.NewGestureClick()
 	volumePreviewCtrl.SetPropagationPhase(gtk.PhaseCapture)
 	volumePreviewCtrl.ConnectReleased(func(_ int, _ float64, _ float64) {
-		go func() { _ = util.PlaySound(true) }()
+		go func() { _ = util.PlaySound() }()
 	})
 
 	volumeRow.SetTitle("Sound volume")

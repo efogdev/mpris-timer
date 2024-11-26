@@ -10,7 +10,6 @@ var Overrides = struct {
 	Notify    bool
 	Sound     bool
 	Volume    float64
-	Silence   int
 	UseUI     bool
 	Duration  int
 	Title     string
@@ -25,12 +24,11 @@ func LoadFlags() {
 	flag.BoolVar(&Overrides.Notify, "notify", UserPrefs.ShouldNotify, "Send desktop notification")
 	flag.BoolVar(&Overrides.Sound, "sound", UserPrefs.EnableSound, "Play sound")
 	flag.Float64Var(&Overrides.Volume, "volume", UserPrefs.Volume, "Volume [0-1]")
-	flag.IntVar(&Overrides.Silence, "silence", 0, "Play this milliseconds of silence before the actual sound — might be helpful for audio devices that wake up not immediately")
 	flag.BoolVar(&Overrides.UseUI, "ui", false, "Show timepicker UI (default true)")
 	flag.BoolVar(&Overrides.HasShadow, "shadow", UserPrefs.Shadow, "Shadow for progress image")
 	flag.BoolVar(&Overrides.Rounded, "rounded", UserPrefs.Rounded, "Rounded corners")
 	flag.BoolVar(&Overrides.LowFPS, "lowfps", UserPrefs.LowFPS, "Low fps (~3 for KDE, ~15 for GNOME)")
-	flag.IntVar(&Overrides.Duration, "start", 0, "Start the timer immediately, don't show UI")
+	flag.IntVar(&Overrides.Duration, "start", 0, "Start the timer immediately, don't show UI (value in seconds)")
 	flag.StringVar(&Overrides.Title, "title", UserPrefs.DefaultTitle, "Name/title of the timer")
 	flag.StringVar(&Overrides.Text, "text", UserPrefs.DefaultText, "Notification text")
 	flag.StringVar(&Overrides.Color, "color", UserPrefs.ProgressColor, "Progress color (#HEX) for the player, use \"default\" for the GTK accent color")

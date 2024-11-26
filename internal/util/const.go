@@ -5,7 +5,6 @@ import (
 	"log"
 	"os"
 	"path"
-	"path/filepath"
 	"strings"
 	"text/template"
 )
@@ -27,15 +26,12 @@ const (
 const svgTemplate = `
 <svg width="{{.Width}}" height="{{.Height}}">
   <style>{{if .HasShadow}}#progress{filter: drop-shadow(-4px 7px 6px rgb(16 16 16 / 0.2));}{{end}}</style>
-  <circle
-		cx="{{.CenterX}}" cy="{{.CenterY}}" r="{{.Radius}}" fill="none" stroke="{{.BgStrokeColor}}"
-		stroke-width="{{.BaseWidth}}"{{if .HasRoundedCorners}} stroke-linecap="round"{{end}}
-	/>
+  <circle cx="{{.CenterX}}" cy="{{.CenterY}}" r="{{.Radius}}" fill="none" stroke="{{.BgStrokeColor}}" stroke-width="{{.BaseWidth}}" />
   <circle id="progress"
 		cx="{{.CenterX}}" cy="{{.CenterY}}" r="{{.Radius}}" fill="none" stroke="{{.FgStrokeColor}}"
 		stroke-width="{{.StrokeWidth}}" stroke-dasharray="{{.Circumference}}" stroke-dashoffset="{{.DashOffset}}"
-		transform="rotate({{if .HasRoundedCorners}}{{.RoundedOrigin}}{{else}}-90{{end}} {{.CenterX}} {{.CenterY}})"
-		{{if .HasRoundedCorners}} stroke-linecap="round"{{end}}
+		transform="rotate({{if .Rounded}}{{.CustomOrigin}}{{else}}-90{{end}} {{.CenterX}} {{.CenterY}})"
+		{{if .Rounded}} stroke-linecap="round"{{end}}
 	/>
 </svg>`
 
@@ -47,21 +43,21 @@ var (
 )
 
 type svgParams struct {
-	Width             int
-	Height            int
-	CenterX           int
-	CenterY           int
-	Radius            float64
-	FgStrokeColor     string
-	BgStrokeColor     string
-	BaseWidth         int
-	StrokeWidth       int
-	Circumference     float64
-	DashOffset        float64
-	HasShadow         bool
-	HasRoundedCorners bool
-	RoundedOrigin     int
-	Progress          int
+	Width         int
+	Height        int
+	CenterX       int
+	CenterY       int
+	Radius        float64
+	FgStrokeColor string
+	BgStrokeColor string
+	BaseWidth     int
+	StrokeWidth   int
+	Circumference float64
+	DashOffset    float64
+	HasShadow     bool
+	Rounded       bool
+	CustomOrigin  int
+	Progress      int
 }
 
 func init() {
@@ -83,21 +79,6 @@ func init() {
 
 	_ = os.MkdirAll(CacheDir, 0755)
 	_ = os.MkdirAll(DataDir, 0755)
-
-	// because backward compatibility
-	go func() {
-		_ = filepath.Walk(CacheDir, func(path string, info os.FileInfo, err error) error {
-			if err != nil {
-				return err
-			}
-
-			if !info.IsDir() && filepath.Ext(info.Name()) == ".svg" {
-				_ = os.Remove(path)
-			}
-
-			return nil
-		})
-	}()
 }
 
 func CalculateFps() int {
@@ -106,7 +87,7 @@ func CalculateFps() int {
 		fps = plasmaFPS
 	}
 	if Overrides.LowFPS {
-		log.Println("low fps requested")
+		log.Println("lower fps requested")
 		fps /= 2
 	}
 
