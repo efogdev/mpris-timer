@@ -84,7 +84,7 @@ flatpak run org.flatpak.Builder --force-clean --sandbox --user --install --insta
 
 ## Contributors
 
-[@Tuba2](https://github.com/Tuba2) — app name and icon
+[@Tuba2](https://github.com/Tuba2) — app name and icon \
 [@efogdev](https://github.com/efogdev) — oh wait that's me
 
 ## ToDo
