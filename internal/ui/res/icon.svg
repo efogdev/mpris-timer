@@ -5,7 +5,7 @@
    viewBox="0 0 128 128"
    version="1.1"
    id="svg24"
-   sodipodi:docname="Play Timer - finais.svg"
+   sodipodi:docname="icon.svg"
    inkscape:version="1.4 (e7c3feb100, 2024-10-09)"
    inkscape:export-filename="play-timer-icon-ponteiro-grosso.png"
    inkscape:export-xdpi="384"
@@ -24,8 +24,8 @@
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#d1d1d1"
      inkscape:zoom="5.6568543"
-     inkscape:cx="38.448931"
-     inkscape:cy="63.286057"
+     inkscape:cx="38.625708"
+     inkscape:cy="63.286056"
      inkscape:window-width="1920"
      inkscape:window-height="1011"
      inkscape:window-x="0"
@@ -858,7 +858,7 @@
       <g
          id="g77"
          style="fill:#1a5fb4"
-         transform="matrix(0.90022611,0,0,0.90022611,1.9988106,2.7943377)">
+         transform="matrix(0.99999653,0,0,0.99999653,-4.8726707,-3.9889743)">
         <g
            id="g76"
            style="fill:#1a5fb4">
@@ -910,8 +910,8 @@
          inkscape:rounded="0"
          inkscape:randomized="0"
          d="M 101.81507,15.117874 -37.815074,95.733378 A 17.456617,17.456617 30 0 1 -64,80.615504 l 0,-161.231008 a 17.456617,17.456617 150 0 1 26.184926,-15.117874 l 139.630144,80.615504 a 17.456617,17.456617 90 0 1 0,30.235748 z"
-         inkscape:transform-center-x="-16.132992"
-         transform="matrix(0.50415605,0,0,0.50415605,52.269046,61.299322)"
+         inkscape:transform-center-x="-17.920982"
+         transform="matrix(0.56003075,0,0,0.56003075,50.968923,61.000011)"
          inkscape:path-effect="#path-effect98" />
     </g>
     <g
@@ -921,18 +921,18 @@
        style="display:inline">
       <path
          id="path81"
-         style="display:inline;fill:#c0bfbc;stroke-width:7.48395;stroke-linecap:round"
-         d="m 28.145808,13.681447 c -1.083051,0.105889 -2.137071,0.33121 -3.108593,0.821473 v 20.412963 c 0,0.745771 0.604567,1.350339 1.350339,1.350339 h 5.118278 c 0.745771,0 1.350339,-0.604568 1.350339,-1.350339 V 14.64453 c -1.444999,-0.770376 -3.076273,-1.069138 -4.710363,-0.963083 z"
+         style="display:inline;fill:#c0bfbc;stroke-width:8.31338;stroke-linecap:round"
+         d="m 24.172151,8.1047339 c -1.203084,0.117624 -2.373919,0.367917 -3.453113,0.912515 V 31.692544 c 0,0.828423 0.67157,1.499994 1.499995,1.499994 h 5.685527 c 0.828423,0 1.499995,-0.671571 1.499995,-1.499994 V 9.1745529 c -1.605146,-0.855755 -3.417211,-1.187628 -5.232404,-1.069819 z"
          sodipodi:nodetypes="ccsssscc" />
       <path
          id="path82"
-         style="display:inline;fill:#c0bfbc;stroke-width:7.48395;stroke-linecap:round"
-         d="m 56.797339,26.656179 -4.981914,12.027642 c -0.285978,0.68945 0.04164,1.48014 0.731433,1.765287 l 4.729704,1.958695 c 0.688965,0.284805 1.478382,-0.04261 1.763529,-0.731434 l 4.587974,-11.076467 z"
+         style="display:inline;fill:#c0bfbc;stroke-width:8.31338;stroke-linecap:round"
+         d="m 55.999079,22.517432 -5.534051,13.360643 c -0.317672,0.765861 0.04625,1.644182 0.812497,1.960931 l 5.253888,2.175773 c 0.765322,0.31637 1.642229,-0.04733 1.958978,-0.812497 L 63.586842,26.89823 Z"
          sodipodi:nodetypes="ccccccc" />
       <path
          id="path83"
-         style="display:inline;fill:#c0bfbc;stroke-width:7.48395;stroke-linecap:round"
-         d="m 84.737454,42.787412 -9.628666,9.630144 c -0.527221,0.527301 -0.527205,1.382147 -10e-7,1.909464 l 3.618486,3.618487 c 0.527518,0.528377 1.383706,0.528377 1.911224,0 l 11.109684,-11.11045 z"
+         style="display:inline;fill:#c0bfbc;stroke-width:8.31338;stroke-linecap:round"
+         d="M 87.035746,40.43646 76.339952,51.133895 c -0.585652,0.585741 -0.585634,1.535328 -10e-7,2.121087 l 4.019516,4.019517 c 0.585982,0.586936 1.53706,0.586936 2.123042,0 l 12.34095,-12.341801 z"
          sodipodi:nodetypes="csccccc" />
     </g>
     <g
@@ -942,7 +942,7 @@
        style="display:inline">
       <g
          id="g87"
-         transform="matrix(0.90022611,0,0,0.90022611,1.9988106,2.7943377)">
+         transform="matrix(0.99999653,0,0,0.99999653,-4.8726707,-3.9889743)">
         <path
            id="path84"
            style="display:inline;fill:#3584e4;stroke-width:8.31341;stroke-linecap:round"
@@ -967,17 +967,17 @@
        inkscape:label="Sombras Ponteiros Menores"
        style="display:inline">
       <path
-         style="display:inline;fill:#1a5fb4;stroke-width:0.720156;stroke-linecap:round"
-         d="m 106.89853,58.862191 c -2.50919,-4.346037 -8.122561,-5.851165 -12.468589,-3.34198 L 24.669636,95.796337 c -4.322255,2.347151 -5.939932,7.810393 -3.592779,12.132643 l 0.01266,0.022 0.01267,0.022 c 2.509185,4.34604 8.121845,5.84995 12.467884,3.34077 L 103.33037,71.037479 c 4.32226,-2.347147 5.93993,-7.810385 3.59278,-12.132646 l -0.0127,-0.02193 z"
+         style="display:inline;fill:#1a5fb4;stroke-width:0.79997;stroke-linecap:round"
+         d="m 111.65289,58.292777 c -2.78728,-4.8277 -9.02277,-6.499639 -13.850458,-3.712365 L 20.310721,99.320269 c -4.801283,2.607281 -6.598244,8.676001 -3.99096,13.477281 l 0.01406,0.0244 0.01407,0.0244 c 2.787273,4.8277 9.021974,6.49829 13.849677,3.71102 L 107.68928,71.81743 c 4.80129,-2.607277 6.59824,-8.675995 3.99096,-13.477285 l -0.0141,-0.02436 z"
          id="path88"
          sodipodi:nodetypes="sscccsscccs" />
       <rect
-         style="display:inline;fill:#1a5fb4;stroke-width:8.67481;stroke-linecap:round"
+         style="display:inline;fill:#1a5fb4;stroke-width:9.63622;stroke-linecap:round"
          id="rect4"
-         width="17.894697"
-         height="1.8005257"
-         x="19.999498"
-         y="101.78093" />
+         width="19.877934"
+         height="2.0000746"
+         x="15.123001"
+         y="105.96812" />
     </g>
     <g
        inkscape:groupmode="layer"
@@ -985,13 +985,13 @@
        inkscape:label="Ponteiros Menores"
        style="display:inline">
       <path
-         style="display:inline;fill:#62a0ea;stroke-width:0.720156;stroke-linecap:round"
-         d="m 29.131101,45.861703 c -5.018372,0 -9.128535,4.108756 -9.128535,9.127127 v 46.56169 c -0.128441,4.91675 3.794026,9.04932 8.710789,9.17776 h 0.02532 0.02532 c 5.01837,0 9.127127,-4.10875 9.127127,-9.12712 V 55.039466 c 0.128441,-4.91676 -3.794027,-9.049322 -8.710788,-9.177763 h -0.02532 z"
+         style="display:inline;fill:#62a0ea;stroke-width:0.79997;stroke-linecap:round"
+         d="m 25.266642,43.851469 c -5.574549,0 -10.140234,4.564122 -10.140234,10.13867 v 51.722041 c -0.142676,5.46166 4.214511,10.05224 9.67619,10.19491 h 0.02813 0.02813 c 5.574547,0 10.13867,-4.56411 10.13867,-10.13866 V 54.046387 c 0.142668,-5.461676 -4.21452,-10.052242 -9.676197,-10.194918 h -0.02813 z"
          id="path89"
          sodipodi:nodetypes="sscccsscccs" />
       <path
-         style="display:inline;fill:#3584e4;stroke-width:0.720156;stroke-linecap:round"
-         d="M 106.89853,57.061738 C 104.38934,52.715702 98.775969,51.210574 94.429941,53.719759 L 24.669636,93.995885 c -4.322255,2.347151 -5.939932,7.810385 -3.592779,12.132645 l 0.01266,0.022 0.01267,0.022 c 2.509185,4.34604 8.121845,5.84995 12.467884,3.34076 L 103.33037,69.237027 c 4.32226,-2.347147 5.93993,-7.810386 3.59278,-12.132646 l -0.0127,-0.02193 z"
+         style="display:inline;fill:#3584e4;stroke-width:0.79997;stroke-linecap:round"
+         d="m 111.65289,56.292783 c -2.78728,-4.827699 -9.02277,-6.499637 -13.850458,-3.712364 l -77.491711,44.73986 c -4.801283,2.60728 -6.598244,8.675991 -3.99096,13.477281 l 0.01406,0.0244 0.01407,0.0244 c 2.787273,4.8277 9.021974,6.49829 13.849677,3.71101 L 107.68928,69.817438 c 4.80129,-2.607277 6.59824,-8.675997 3.99096,-13.477286 l -0.0141,-0.02436 z"
          id="path90"
          sodipodi:nodetypes="sscccsscccs" />
     </g>
@@ -1001,11 +1001,11 @@
        inkscape:label="Pino Plano"
        style="display:inline">
       <circle
-         style="display:inline;fill:#f6f5f4;stroke:none;stroke-width:0.551097;stroke-linecap:round"
+         style="display:inline;fill:#f6f5f4;stroke:none;stroke-width:0.612174;stroke-linecap:round"
          id="circle90"
-         cx="28.946846"
-         cy="101.78093"
-         r="3.7014461" />
+         cx="25.061966"
+         cy="105.96812"
+         r="4.1116705" />
     </g>
   </g>
 </svg>
