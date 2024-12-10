@@ -23,21 +23,21 @@ type PropsChangedEvent struct {
 }
 
 type TimerPlayer struct {
-	Done           chan struct{}
 	Name           string
+	Done           chan struct{}
+	tickerDone     chan struct{}
+	emitter        chan PropsChangedEvent
 	serviceName    string
+	playbackStatus string
+	isPaused       bool
 	fps            int
-	objectPath     dbus.ObjectPath
-	conn           *dbus.Conn
 	duration       time.Duration
 	startTime      time.Time
-	isPaused       bool
 	pausedAt       time.Time
 	interval       time.Duration
 	pausedFor      time.Duration
-	tickerDone     chan struct{}
-	emitter        chan PropsChangedEvent
-	playbackStatus string
+	objectPath     dbus.ObjectPath
+	conn           *dbus.Conn
 }
 
 func NewTimerPlayer(seconds int, name string) (*TimerPlayer, error) {
