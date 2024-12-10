@@ -31,7 +31,7 @@
      inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="1"
-     inkscape:current-layer="g93"
+     inkscape:current-layer="g52"
      showguides="true">
     <inkscape:page
        x="0"
@@ -847,58 +847,18 @@
   </defs>
   <g
      inkscape:groupmode="layer"
-     id="g93"
-     inkscape:label="Ajustes Finais Ponteiro Grosso"
+     id="g52"
+     inkscape:label="Ajustes Finais Base Grossa"
      style="display:inline">
     <g
        inkscape:groupmode="layer"
-       id="g78"
-       inkscape:label="Sombra Ponteiro Maior"
-       style="display:inline">
-      <g
-         id="g77"
-         style="fill:#1a5fb4"
-         transform="matrix(0.90022611,0,0,0.90022611,1.9988106,2.7943377)">
-        <g
-           id="g76"
-           style="fill:#1a5fb4">
-          <path
-             sodipodi:type="star"
-             style="display:inline;opacity:1;fill:#1a5fb4;stroke-width:4.72441;stroke-linecap:round"
-             id="path76"
-             inkscape:flatsided="true"
-             sodipodi:sides="3"
-             sodipodi:cx="0"
-             sodipodi:cy="0"
-             sodipodi:r1="128"
-             sodipodi:r2="64"
-             sodipodi:arg1="0"
-             sodipodi:arg2="1.0471976"
-             inkscape:rounded="0"
-             inkscape:randomized="0"
-             d="M 101.81507,15.117874 -37.815074,95.733378 A 17.456617,17.456617 30 0 1 -64,80.615504 l 0,-161.231008 a 17.456617,17.456617 150 0 1 26.184926,-15.117874 l 139.630144,80.615504 a 17.456617,17.456617 90 0 1 0,30.235748 z"
-             inkscape:transform-center-x="-17.921045"
-             transform="matrix(0.56003269,0,0,0.56003269,55.841788,70.98921)"
-             inkscape:path-effect="#path-effect96" />
-        </g>
-        <rect
-           style="display:inline;fill:#1a5fb4;stroke-width:4.09146;stroke-linecap:round"
-           id="rect76"
-           width="97.75"
-           height="5.9999981"
-           x="19.999697"
-           y="64.989212" />
-      </g>
-    </g>
-    <g
-       inkscape:groupmode="layer"
-       id="g79"
-       inkscape:label="Fundo Triângulo Ponteiros Menores"
+       id="g15"
+       inkscape:label="Sombra Fundo Triângulo Ponteiros Menores"
        style="display:inline">
       <path
          sodipodi:type="star"
-         style="opacity:1;fill:#deddda;stroke-width:4.72441;stroke-linecap:round"
-         id="path79"
+         style="display:inline;opacity:1;fill:#c0bfbc;stroke-width:4.72441;stroke-linecap:round"
+         id="path12"
          inkscape:flatsided="true"
          sodipodi:sides="3"
          sodipodi:cx="0"
@@ -909,53 +869,84 @@
          sodipodi:arg2="1.0471976"
          inkscape:rounded="0"
          inkscape:randomized="0"
-         d="M 101.81507,15.117874 -37.815074,95.733378 A 17.456617,17.456617 30 0 1 -64,80.615504 l 0,-161.231008 a 17.456617,17.456617 150 0 1 26.184926,-15.117874 l 139.630144,80.615504 a 17.456617,17.456617 90 0 1 0,30.235748 z"
          inkscape:transform-center-x="-16.132992"
-         transform="matrix(0.50415605,0,0,0.50415605,52.269046,61.299322)"
-         inkscape:path-effect="#path-effect98" />
+         transform="matrix(0.50415605,0,0,0.50415605,52.26904,67.600904)"
+         d="M 101.81507,15.117874 -37.815074,95.733378 A 17.456617,17.456617 30 0 1 -64,80.615504 l 0,-161.231008 a 17.456617,17.456617 150 0 1 26.184926,-15.117874 l 139.630144,80.615504 a 17.456617,17.456617 90 0 1 0,30.235748 z"
+         inkscape:path-effect="#path-effect53" />
+      <rect
+         style="fill:#c0bfbc;stroke-width:4.25304;stroke-linecap:round"
+         id="rect67"
+         width="87.997101"
+         height="7.2018089"
+         x="20.003056"
+         y="60.399097" />
     </g>
     <g
        inkscape:groupmode="layer"
-       id="g83"
+       id="g16"
+       inkscape:label="Fundo Triângulo Ponteiros Menores"
+       style="display:inline">
+      <path
+         sodipodi:type="star"
+         style="opacity:1;fill:#deddda;stroke-width:4.72441;stroke-linecap:round"
+         id="path16"
+         inkscape:flatsided="true"
+         sodipodi:sides="3"
+         sodipodi:cx="0"
+         sodipodi:cy="0"
+         sodipodi:r1="128"
+         sodipodi:r2="64"
+         sodipodi:arg1="0"
+         sodipodi:arg2="1.0471976"
+         inkscape:rounded="0"
+         inkscape:randomized="0"
+         inkscape:transform-center-x="-16.132992"
+         transform="matrix(0.50415605,0,0,0.50415605,52.26904,60.399095)"
+         d="M 101.81507,15.117874 -37.815074,95.733378 A 17.456617,17.456617 30 0 1 -64,80.615504 l 0,-161.231008 a 17.456617,17.456617 150 0 1 26.184926,-15.117874 l 139.630144,80.615504 a 17.456617,17.456617 90 0 1 0,30.235748 z"
+         inkscape:path-effect="#path-effect55" />
+    </g>
+    <g
+       inkscape:groupmode="layer"
+       id="g25"
        inkscape:label="Sombras Marcadores Ponteiros Menores"
        style="display:inline">
       <path
-         id="path81"
+         id="path17"
          style="display:inline;fill:#c0bfbc;stroke-width:7.48395;stroke-linecap:round"
-         d="m 28.145808,13.681447 c -1.083051,0.105889 -2.137071,0.33121 -3.108593,0.821473 v 20.412963 c 0,0.745771 0.604567,1.350339 1.350339,1.350339 h 5.118278 c 0.745771,0 1.350339,-0.604568 1.350339,-1.350339 V 14.64453 c -1.444999,-0.770376 -3.076273,-1.069138 -4.710363,-0.963083 z"
+         d="m 28.145802,12.781222 c -1.083051,0.105889 -2.137071,0.33121 -3.108593,0.821472 v 20.412963 c 0,0.745771 0.604567,1.350339 1.350339,1.350339 h 5.118278 c 0.745771,0 1.350339,-0.604568 1.350339,-1.350339 V 13.744304 c -1.444999,-0.770375 -3.076273,-1.069138 -4.710363,-0.963082 z"
          sodipodi:nodetypes="ccsssscc" />
       <path
-         id="path82"
+         id="path18"
          style="display:inline;fill:#c0bfbc;stroke-width:7.48395;stroke-linecap:round"
-         d="m 56.797339,26.656179 -4.981914,12.027642 c -0.285978,0.68945 0.04164,1.48014 0.731433,1.765287 l 4.729704,1.958695 c 0.688965,0.284805 1.478382,-0.04261 1.763529,-0.731434 l 4.587974,-11.076467 z"
+         d="m 56.797333,25.755953 -4.981914,12.027642 c -0.285978,0.68945 0.04164,1.48014 0.731433,1.765287 l 4.729704,1.958695 c 0.688965,0.284805 1.478382,-0.04261 1.763529,-0.731434 l 4.587974,-11.076467 z"
          sodipodi:nodetypes="ccccccc" />
       <path
-         id="path83"
+         id="path25"
          style="display:inline;fill:#c0bfbc;stroke-width:7.48395;stroke-linecap:round"
-         d="m 84.737454,42.787412 -9.628666,9.630144 c -0.527221,0.527301 -0.527205,1.382147 -10e-7,1.909464 l 3.618486,3.618487 c 0.527518,0.528377 1.383706,0.528377 1.911224,0 l 11.109684,-11.11045 z"
+         d="m 84.737448,41.887186 -9.628667,9.630144 c -0.52722,0.527301 -0.527204,1.382146 0,1.909464 l 3.618486,3.618487 c 0.527518,0.528377 1.383706,0.528377 1.911224,0 l 11.109684,-11.11045 z"
          sodipodi:nodetypes="csccccc" />
     </g>
     <g
        inkscape:groupmode="layer"
-       id="g88"
+       id="g31"
        inkscape:label="Marcadores Ponteiros Menores"
        style="display:inline">
       <g
-         id="g87"
-         transform="matrix(0.90022611,0,0,0.90022611,1.9988106,2.7943377)">
+         id="g30"
+         transform="matrix(0.90022611,0,0,0.90022611,1.9988061,1.8941137)">
         <path
-           id="path84"
+           id="path26"
            style="display:inline;fill:#3584e4;stroke-width:8.31341;stroke-linecap:round"
            d="m 31.530101,10.09375 c -1.203088,0.117625 -2.373927,0.367919 -3.453125,0.912518 v 22.675373 c 0,0.828427 0.671573,1.5 1.5,1.5 h 5.685547 c 0.828427,0 1.5,-0.671573 1.5,-1.5 V 11.163573 C 35.157372,10.307815 33.345301,9.9759396 31.530101,10.09375 Z"
            transform="translate(-2.485179)"
            sodipodi:nodetypes="ccsssscc" />
         <path
-           id="path86"
+           id="path29"
            style="display:inline;fill:#3584e4;stroke-width:8.31341;stroke-linecap:round"
            d="m 28.075915,20.967793 1.45e-4,12.71382 a 1.5,1.5 0 0 0 1.50107,1.50074 l 5.686612,-4.23e-4 a 1.5,1.5 0 0 0 1.498935,-1.500323 l 1.7e-5,-11.570188 z"
            transform="rotate(22.5,31.185823,104.30164)" />
         <path
-           id="path87"
+           id="path30"
            style="display:inline;fill:#3584e4;stroke-width:8.31341;stroke-linecap:round"
            d="m 28.07626,20.347723 0.0014,13.334211 a 1.5,1.5 0 0 0 1.499839,1.49984 h 5.684476 a 1.5,1.5 0 0 0 1.501221,-1.501221 V 18.022005 Z"
            transform="rotate(45,31.177767,107.54241)" />
@@ -963,48 +954,55 @@
     </g>
     <g
        inkscape:groupmode="layer"
-       id="g89"
+       id="g45"
        inkscape:label="Sombras Ponteiros Menores"
        style="display:inline">
       <path
          style="display:inline;fill:#1a5fb4;stroke-width:0.720156;stroke-linecap:round"
-         d="m 106.89853,58.862191 c -2.50919,-4.346037 -8.122561,-5.851165 -12.468589,-3.34198 L 24.669636,95.796337 c -4.322255,2.347151 -5.939932,7.810393 -3.592779,12.132643 l 0.01266,0.022 0.01267,0.022 c 2.509185,4.34604 8.121845,5.84995 12.467884,3.34077 L 103.33037,71.037479 c 4.32226,-2.347147 5.93993,-7.810385 3.59278,-12.132646 l -0.0127,-0.02193 z"
-         id="path88"
+         d="M 106.89853,57.961965 C 104.38934,53.615928 98.775963,52.1108 94.429935,54.619985 L 24.66963,94.896111 c -4.322255,2.347151 -5.939932,7.810389 -3.592779,12.132649 l 0.01266,0.022 0.01267,0.022 c 2.509185,4.34604 8.121845,5.84995 12.467884,3.34077 L 103.33037,70.137253 c 4.32226,-2.347147 5.93993,-7.810385 3.59278,-12.132646 l -0.0127,-0.02193 z"
+         id="path45"
          sodipodi:nodetypes="sscccsscccs" />
       <rect
          style="display:inline;fill:#1a5fb4;stroke-width:8.67481;stroke-linecap:round"
-         id="rect4"
+         id="rect1"
          width="17.894697"
          height="1.8005257"
-         x="19.999498"
-         y="101.78093" />
+         x="19.999495"
+         y="100.88071" />
+      <rect
+         style="display:inline;fill:#1a5fb4;stroke-width:8.67481;stroke-linecap:round"
+         id="rect17"
+         width="17.894697"
+         height="1.8005257"
+         x="90.105797"
+         y="60.552063" />
     </g>
     <g
        inkscape:groupmode="layer"
-       id="g90"
+       id="g47"
        inkscape:label="Ponteiros Menores"
        style="display:inline">
       <path
          style="display:inline;fill:#62a0ea;stroke-width:0.720156;stroke-linecap:round"
-         d="m 29.131101,45.861703 c -5.018372,0 -9.128535,4.108756 -9.128535,9.127127 v 46.56169 c -0.128441,4.91675 3.794026,9.04932 8.710789,9.17776 h 0.02532 0.02532 c 5.01837,0 9.127127,-4.10875 9.127127,-9.12712 V 55.039466 c 0.128441,-4.91676 -3.794027,-9.049322 -8.710788,-9.177763 h -0.02532 z"
-         id="path89"
+         d="m 29.131095,44.961477 c -5.018372,0 -9.128535,4.108756 -9.128535,9.127127 v 46.561686 c -0.128441,4.91676 3.794026,9.04933 8.710789,9.17777 h 0.02532 0.02532 c 5.01837,0 9.127127,-4.10875 9.127127,-9.12713 V 54.13924 c 0.128441,-4.916761 -3.794027,-9.049322 -8.710788,-9.177763 h -0.02532 z"
+         id="path46"
          sodipodi:nodetypes="sscccsscccs" />
       <path
          style="display:inline;fill:#3584e4;stroke-width:0.720156;stroke-linecap:round"
-         d="M 106.89853,57.061738 C 104.38934,52.715702 98.775969,51.210574 94.429941,53.719759 L 24.669636,93.995885 c -4.322255,2.347151 -5.939932,7.810385 -3.592779,12.132645 l 0.01266,0.022 0.01267,0.022 c 2.509185,4.34604 8.121845,5.84995 12.467884,3.34076 L 103.33037,69.237027 c 4.32226,-2.347147 5.93993,-7.810386 3.59278,-12.132646 l -0.0127,-0.02193 z"
-         id="path90"
+         d="M 106.89853,56.161512 C 104.38934,51.815475 98.775963,50.310348 94.429935,52.819533 L 24.66963,93.095659 c -4.322255,2.34715 -5.939932,7.810391 -3.592779,12.132641 l 0.01266,0.022 0.01267,0.022 c 2.509185,4.34605 8.121845,5.84996 12.467884,3.34077 L 103.33037,68.3368 c 4.32226,-2.347146 5.93993,-7.810385 3.59278,-12.132645 l -0.0127,-0.02193 z"
+         id="path47"
          sodipodi:nodetypes="sscccsscccs" />
     </g>
     <g
        inkscape:groupmode="layer"
-       id="g92"
+       id="g49"
        inkscape:label="Pino Plano"
        style="display:inline">
       <circle
          style="display:inline;fill:#f6f5f4;stroke:none;stroke-width:0.551097;stroke-linecap:round"
-         id="circle90"
-         cx="28.946846"
-         cy="101.78093"
+         id="circle48"
+         cx="28.946842"
+         cy="100.88071"
          r="3.7014461" />
     </g>
   </g>
