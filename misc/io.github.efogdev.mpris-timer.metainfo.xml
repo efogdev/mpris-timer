@@ -4,8 +4,8 @@
 	<url type="homepage">https://github.com/efogdev/mpris-timer</url>
 
 	<branding>
-		<color type="primary" scheme_preference="light">#dbf8ff</color>
-		<color type="primary" scheme_preference="dark">#194894</color>
+		<color type="primary" scheme_preference="light">#85c8ff</color>
+		<color type="primary" scheme_preference="dark">#2554a4</color>
 	</branding>
 	
 	<name>Play Timer</name>
