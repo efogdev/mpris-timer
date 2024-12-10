@@ -82,6 +82,11 @@ Flatpak:
 flatpak run org.flatpak.Builder --force-clean --sandbox --user --install --install-deps-from=flathub --ccache .build io.github.efogdev.mpris-timer.yml
 ```
 
+## Contributors
+
+[@Tuba2](https://github.com/Tuba2) — app name and icon
+[@efogdev](https://github.com/efogdev) — oh wait that's me
+
 ## ToDo
 
 1) Custom sounds
