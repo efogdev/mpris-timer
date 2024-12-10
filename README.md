@@ -15,7 +15,9 @@ flatpak install flathub io.github.efogdev.mpris-timer
 ```
 
 ## Demo
-![2](https://github.com/user-attachments/assets/8fba3423-0133-4d79-8dfa-46c9995ba96b)
+![1](https://github.com/user-attachments/assets/9eab4435-9833-4f39-85e5-9a2f9ec3e75c)
+
+
 
 Play Timer aims to be as keyboard friendly as possible. \
 Use navigation keys (arrows, tab, shift+tab, space, enter) or start inputting numbers right away.
