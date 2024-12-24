@@ -13,6 +13,7 @@ Notifications included! Utilizing GTK4, Adwaita and MPRIS interface.
 ```shell
 flatpak install flathub io.github.efogdev.mpris-timer
 ```
+...or install `play-timer` from AUR if you are a fellow arch-based distro enjoyer.
 
 ## Demo
 ![1](https://github.com/user-attachments/assets/9eab4435-9833-4f39-85e5-9a2f9ec3e75c)
