@@ -5,9 +5,9 @@ import (
 	"github.com/godbus/dbus/v5"
 	"log"
 	"math"
-	"mpris-timer/internal/util"
 	"os"
 	"strconv"
+	"strings"
 	"sync"
 	"time"
 )
@@ -18,17 +18,22 @@ const (
 )
 
 type PropsChangedEvent struct {
-	text string
-	img  string
+	Text     string
+	Img      string
+	IsPaused bool
 }
 
 type TimerPlayer struct {
 	Name           string
 	Done           chan struct{}
+	IsFinished     bool
 	tickerDone     chan struct{}
 	emitter        chan PropsChangedEvent
 	serviceName    string
 	playbackStatus string
+	progressText   string
+	img            string
+	progress       float64
 	isPaused       bool
 	fps            int
 	duration       time.Duration
@@ -38,6 +43,7 @@ type TimerPlayer struct {
 	pausedFor      time.Duration
 	objectPath     dbus.ObjectPath
 	conn           *dbus.Conn
+	subscribers    []func(event PropsChangedEvent)
 }
 
 func NewTimerPlayer(seconds int, name string) (*TimerPlayer, error) {
@@ -45,7 +51,7 @@ func NewTimerPlayer(seconds int, name string) (*TimerPlayer, error) {
 		return nil, fmt.Errorf("duration must be positive")
 	}
 
-	fps := util.CalculateFps()
+	fps := CalculateFps()
 	interval := baseInterval
 	if time.Second*time.Duration(seconds) > lowPresicionAfter {
 		log.Printf("low precision requested, duration > %d", lowPresicionAfter)
@@ -65,6 +71,10 @@ func NewTimerPlayer(seconds int, name string) (*TimerPlayer, error) {
 	}, nil
 }
 
+func (p *TimerPlayer) AddSubscription(onProgress func(event PropsChangedEvent)) {
+	p.subscribers = append(p.subscribers, onProgress)
+}
+
 func (p *TimerPlayer) Start() error {
 	id := strconv.Itoa(int(time.Now().UnixMicro()))[8:]
 	conn, err := dbus.SessionBus()
@@ -73,7 +83,7 @@ func (p *TimerPlayer) Start() error {
 	}
 
 	p.conn = conn
-	p.serviceName = fmt.Sprintf("org.mpris.MediaPlayer2.%s.run-%s", util.AppId, id)
+	p.serviceName = fmt.Sprintf("org.mpris.MediaPlayer2.%s.run-%s", AppId, id)
 
 	reply, err := conn.RequestName(p.serviceName, dbus.NameFlagAllowReplacement)
 	if err != nil || reply != dbus.RequestNameReplyPrimaryOwner {
@@ -92,7 +102,7 @@ func (p *TimerPlayer) Start() error {
 }
 
 func (p *TimerPlayer) Destroy() {
-	_ = p.conn.Close()
+	defer func() { _ = p.conn.Close() }()
 	close(p.emitter)
 
 	if p.Done != nil {
@@ -105,18 +115,20 @@ func (p *TimerPlayer) Destroy() {
 func (p *TimerPlayer) runTicker() {
 	log.Printf("player requested, fps = %d", p.fps)
 
-	progress := 0.0
+	p.progress = 0.0
 	mu := sync.Mutex{}
-	img, _ := util.MakeProgressCircle(0)
+	img, _ := MakeProgressCircle(0)
 	img = "file://" + img
+	p.img = img
 
 	renderTicker := time.NewTicker(time.Duration(int64(time.Second) / int64(p.fps)))
 	defer renderTicker.Stop()
 	go func() {
 		for range renderTicker.C {
 			mu.Lock()
-			img, _ = util.MakeProgressCircle(progress)
+			img, _ = MakeProgressCircle(p.progress)
 			img = "file://" + img
+			p.img = img
 			mu.Unlock()
 		}
 	}()
@@ -137,17 +149,24 @@ func (p *TimerPlayer) runTicker() {
 			timeLeft := p.duration - elapsed
 
 			mu.Lock()
-			progress = math.Min(100, (float64(elapsed)/float64(p.duration))*100)
-			if progress == 100 {
+			p.progress = math.Min(100, (float64(elapsed)/float64(p.duration))*100)
+			if p.progress == 100 {
+				p.IsFinished = true
+				p.broadcast()
 				p.Destroy()
+				mu.Unlock()
 				return
 			}
 
+			p.progressText = FormatDuration(timeLeft)
 			p.emitter <- PropsChangedEvent{
-				text: util.FormatDuration(timeLeft),
-				img:  img,
+				Text:     p.progressText,
+				Img:      img,
+				IsPaused: p.isPaused,
 			}
 			mu.Unlock()
+
+			p.broadcast()
 		}
 	}
 }
@@ -156,7 +175,7 @@ func (p *TimerPlayer) emitLoop() {
 	var prev *PropsChangedEvent
 
 	for e := range p.emitter {
-		if prev != nil && prev.img == e.img && prev.text == e.text {
+		if prev != nil && prev.Img == e.Img && prev.Text == e.Text {
 			continue
 		}
 
@@ -165,8 +184,8 @@ func (p *TimerPlayer) emitLoop() {
 			"Metadata": dbus.MakeVariant(map[string]dbus.Variant{
 				"mpris:trackid": dbus.MakeVariant(dbus.ObjectPath("/track/1")),
 				"xesam:title":   dbus.MakeVariant(p.Name),
-				"xesam:artist":  dbus.MakeVariant([]string{e.text}),
-				"mpris:artUrl":  dbus.MakeVariant(e.img),
+				"xesam:artist":  dbus.MakeVariant([]string{e.Text}),
+				"mpris:artUrl":  dbus.MakeVariant(e.Img),
 			}),
 		})
 
@@ -234,9 +253,9 @@ func (p *TimerPlayer) Get(iface, prop string) (dbus.Variant, *dbus.Error) {
 	case "org.mpris.MediaPlayer2":
 		switch prop {
 		case "Identity":
-			return dbus.MakeVariant(util.AppName), nil
+			return dbus.MakeVariant(AppName), nil
 		case "DesktopEntry":
-			return dbus.MakeVariant(util.AppId), nil
+			return dbus.MakeVariant(AppId), nil
 		}
 	case "org.mpris.MediaPlayer2.Player":
 		switch prop {
@@ -263,8 +282,8 @@ func (p *TimerPlayer) GetAll(iface string) (map[string]dbus.Variant, *dbus.Error
 	props := make(map[string]dbus.Variant)
 	switch iface {
 	case "org.mpris.MediaPlayer2":
-		props["Identity"] = dbus.MakeVariant(util.AppName)
-		props["DesktopEntry"] = dbus.MakeVariant(util.AppId)
+		props["Identity"] = dbus.MakeVariant(AppName)
+		props["DesktopEntry"] = dbus.MakeVariant(AppId)
 	case "org.mpris.MediaPlayer2.Player":
 		props["PlaybackStatus"] = dbus.MakeVariant(p.playbackStatus)
 		props["CanGoNext"] = dbus.MakeVariant(true)
@@ -279,4 +298,22 @@ func (p *TimerPlayer) GetAll(iface string) (map[string]dbus.Variant, *dbus.Error
 
 func (p *TimerPlayer) Set(_, _ string, _ dbus.Variant) *dbus.Error {
 	return nil
+}
+
+func (p *TimerPlayer) broadcast() {
+	if p.progress >= 100 {
+		return
+	}
+
+	for _, cb := range p.subscribers {
+		if cb == nil {
+			continue
+		}
+
+		cb(PropsChangedEvent{
+			Img:      strings.TrimPrefix(p.img, "file://"),
+			Text:     p.progressText,
+			IsPaused: p.isPaused,
+		})
+	}
 }

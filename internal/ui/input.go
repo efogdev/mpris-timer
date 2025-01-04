@@ -4,7 +4,7 @@ import (
 	"github.com/diamondburned/gotk4/pkg/gdk/v4"
 	"github.com/diamondburned/gotk4/pkg/gtk/v4"
 	"log"
-	"mpris-timer/internal/util"
+	"mpris-timer/internal/core"
 	"slices"
 	"strconv"
 )
@@ -100,7 +100,7 @@ func setupTimeEntry(entry *gtk.Entry, prev *gtk.Widget, next *gtk.Widget, maxVal
 			},
 			{
 				// space = focus next
-				keyval: util.KeySpace.GdkKeyvals(),
+				keyval: core.KeySpace.GdkKeyvals(),
 				mask:   gdk.NoModifierMask,
 				fn: func() bool {
 					formatValue()
@@ -110,7 +110,7 @@ func setupTimeEntry(entry *gtk.Entry, prev *gtk.Widget, next *gtk.Widget, maxVal
 			},
 			{
 				// enter = start timer
-				keyval: util.KeyEnter.GdkKeyvals(),
+				keyval: core.KeyEnter.GdkKeyvals(),
 				mask:   gdk.NoModifierMask,
 				fn: func() bool {
 					if finish == nil {
@@ -124,7 +124,7 @@ func setupTimeEntry(entry *gtk.Entry, prev *gtk.Widget, next *gtk.Widget, maxVal
 			},
 			{
 				// left = focus prev
-				keyval: util.KeyLeft.GdkKeyvals(),
+				keyval: core.KeyLeft.GdkKeyvals(),
 				mask:   gdk.NoModifierMask,
 				fn: func() bool {
 					if prev == nil {
@@ -143,7 +143,7 @@ func setupTimeEntry(entry *gtk.Entry, prev *gtk.Widget, next *gtk.Widget, maxVal
 			},
 			{
 				// right = focus next
-				keyval: util.KeyRight.GdkKeyvals(),
+				keyval: core.KeyRight.GdkKeyvals(),
 				mask:   gdk.NoModifierMask,
 				fn: func() bool {
 					_, _, selection := entry.SelectionBounds()
@@ -169,7 +169,7 @@ func setupTimeEntry(entry *gtk.Entry, prev *gtk.Widget, next *gtk.Widget, maxVal
 		}
 
 		// now we are interested only in numbers
-		isNumber := util.IsGdkKeyvalNumber(keyval)
+		isNumber := core.IsGdkKeyvalNumber(keyval)
 		if !isNumber && !slices.Contains(allowedKeyvals, keyval) {
 			return true
 		}
@@ -201,7 +201,7 @@ func setupTimeEntry(entry *gtk.Entry, prev *gtk.Widget, next *gtk.Widget, maxVal
 		}
 
 		if numVal > maxVal {
-			entry.SetText(util.NumToLabelText(maxVal))
+			entry.SetText(core.NumToLabelText(maxVal))
 		}
 
 		next.GrabFocus()

@@ -1,8 +1,12 @@
-package util
+package core
 
 import (
 	"bytes"
 	"fmt"
+	"github.com/srwiley/oksvg"
+	"github.com/srwiley/rasterx"
+	"image"
+	"image/png"
 	"math"
 	"os"
 	"path"
@@ -93,6 +97,27 @@ func MakeProgressCircle(progress float64) (string, error) {
 	cacheMu.Unlock()
 
 	return filename, nil
+}
+
+func Pngify(filename string) ([]byte, error) {
+	in, err := os.Open(filename)
+	if err != nil {
+		return nil, err
+	}
+	defer func() { _ = in.Close() }()
+
+	icon, _ := oksvg.ReadIconStream(in)
+	icon.SetTarget(-16, -16, width, width)
+	rgba := image.NewRGBA(image.Rect(16, 16, width-16, width-16))
+	icon.Draw(rasterx.NewDasher(width, width, rasterx.NewScannerGV(width, width, rgba, rgba.Bounds())), 1)
+
+	out := bytes.Buffer{}
+	err = png.Encode(&out, rgba)
+	if err != nil {
+		return nil, err
+	}
+
+	return out.Bytes(), nil
 }
 
 func walk(filename string) {

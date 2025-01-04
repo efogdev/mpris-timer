@@ -32,9 +32,9 @@ modules:
       - install -Dm644 misc/$FLATPAK_ID.gschema.xml $FLATPAK_DEST/share/glib-2.0/schemas/$FLATPAK_ID.gschema.xml
       - glib-compile-schemas $FLATPAK_DEST/share/glib-2.0/schemas
     sources:
-      - type: dir
-        path: .
-#      - type: git
-#        url: https://github.com/efogdev/mpris-timer
-#        tag: 1.5.1
+#      - type: dir
+#        path: .
+      - type: git
+        url: https://github.com/efogdev/mpris-timer
+        tag: 2.0.0
       - go.mod.yml

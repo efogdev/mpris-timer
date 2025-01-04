@@ -1,12 +1,15 @@
 package ui
 
 import (
+	"context"
 	"fmt"
+	"github.com/diamondburned/gotk4/pkg/core/gioutil"
 	"github.com/diamondburned/gotk4/pkg/gdk/v4"
+	"github.com/diamondburned/gotk4/pkg/gio/v2"
 	"github.com/diamondburned/gotk4/pkg/gtk/v4"
 	"github.com/efogdev/gotk4-adwaita/pkg/adw"
 	"log"
-	"mpris-timer/internal/util"
+	"mpris-timer/internal/core"
 	"slices"
 	"strconv"
 	"strings"
@@ -16,8 +19,8 @@ import (
 const (
 	prefsMinWidth      = 385
 	prefsMinHeight     = 200
-	prefsDefaultWidth  = 435
-	prefsDefaultHeight = 625
+	prefsDefaultWidth  = 460
+	prefsDefaultHeight = 660
 	sliderWidth        = 175
 )
 
@@ -44,7 +47,7 @@ func NewPrefsWindow() {
 	escCtrl := gtk.NewEventControllerKey()
 	escCtrl.SetPropagationPhase(gtk.PhaseCapture)
 	escCtrl.ConnectKeyPressed(func(keyval, keycode uint, state gdk.ModifierType) (ok bool) {
-		if slices.Contains(util.KeyEsc.GdkKeyvals(), keyval) {
+		if slices.Contains(core.KeyEsc.GdkKeyvals(), keyval) {
 			prefsWin.Close()
 			return true
 		}
@@ -100,6 +103,9 @@ func NewPrefsWidgets(parent *gtk.Box) {
 	timerGroup := adw.NewPreferencesGroup()
 	timerGroup.SetTitle("Timer")
 
+	interfaceGroup := adw.NewPreferencesGroup()
+	interfaceGroup.SetTitle("Interface")
+
 	visualsGroup := adw.NewPreferencesGroup()
 	visualsGroup.SetTitle("Visuals")
 	visualsGroup.SetVAlign(gtk.AlignCenter)
@@ -123,40 +129,104 @@ func NewPrefsWidgets(parent *gtk.Box) {
 	presetsGroup.SetTitle("Interface")
 
 	populateTimerGroup(timerGroup)
+	populateInterfaceGroup(interfaceGroup)
 	populateVisualsGroup(visualsGroup)
 	populatePresetsGroup(presetsGroup)
 
 	parent.Append(timerGroup)
+	parent.Append(interfaceGroup)
 	parent.Append(visualsBox)
 	parent.Append(presetsGroup)
+}
+
+func populateInterfaceGroup(group *adw.PreferencesGroup) {
+	titleEntry := adw.NewEntryRow()
+	titleEntry.SetTitle("Default title")
+	titleEntry.SetText(core.UserPrefs.DefaultTitle)
+	titleEntry.ConnectChanged(func() {
+		core.SetDefaultTitle(titleEntry.Text())
+	})
+
+	titleSwitch := adw.NewSwitchRow()
+	titleSwitch.SetTitle("Title in UI")
+	titleSwitch.SetSubtitle("Requires restart")
+	titleSwitch.SetActive(core.UserPrefs.ShowTitle)
+	titleSwitch.Connect("notify::active", func() {
+		core.SetShowTitle(titleSwitch.Active())
+	})
+
+	forceTraySwitch := adw.NewSwitchRow()
+	forceTraySwitch.SetTitle("Force tray icon")
+	forceTraySwitch.SetActive(core.UserPrefs.ForceTrayIcon)
+	forceTraySwitch.Connect("notify::active", func() {
+		core.SetForceTrayIcon(forceTraySwitch.Active())
+	})
+
+	group.Add(titleEntry)
+	group.Add(titleSwitch)
+	group.Add(forceTraySwitch)
 }
 
 func populateTimerGroup(group *adw.PreferencesGroup) {
 	textEntry := adw.NewEntryRow()
 	volumeRow := adw.NewActionRow()
 	volumeSlider := gtk.NewScaleWithRange(gtk.OrientationHorizontal, 0, 100, 1)
+	customSoundSwitch := adw.NewSwitchRow()
 
 	soundSwitch := adw.NewSwitchRow()
 	soundSwitch.SetTitle("Enable sound")
-	soundSwitch.SetActive(util.UserPrefs.EnableSound)
+	soundSwitch.SetSubtitle("Try clicking volume slider")
+	soundSwitch.SetActive(core.UserPrefs.EnableSound)
 	soundSwitch.Connect("notify::active", func() {
-		util.SetEnableSound(soundSwitch.Active())
-		volumeRow.SetSensitive(util.UserPrefs.EnableSound)
+		core.SetEnableSound(soundSwitch.Active())
+		volumeRow.SetVisible(core.UserPrefs.EnableSound)
+		customSoundSwitch.SetVisible(core.UserPrefs.EnableSound)
+	})
+
+	customSoundSwitch = adw.NewSwitchRow()
+	customSoundSwitch.SetTitle("Default sound")
+	customSoundSwitch.SetVisible(core.UserPrefs.EnableSound)
+	customSoundSwitch.SetActive(core.UserPrefs.SoundFilename == "")
+	customSoundSwitch.Connect("notify::active", func() {
+		if customSoundSwitch.Active() {
+			core.SetSoundFilename("")
+		} else {
+			dialog := gtk.NewFileDialog()
+			dialog.SetModal(true)
+			dialog.SetTitle("MP3 sound")
+
+			filter := gtk.NewFileFilter()
+			filter.AddSuffix("mp3")
+			filter.AddMIMEType("audio/mpeg")
+
+			model := gioutil.NewListModel[*gtk.FileFilter]()
+			model.Append(filter)
+
+			dialog.SetFilters(model)
+			dialog.SetDefaultFilter(filter)
+			dialog.Open(context.Background(), &prefsWin.Window, func(r gio.AsyncResulter) {
+				file, err := dialog.OpenFinish(r)
+				if err == nil {
+					core.SetSoundFilename(file.Path())
+					_ = core.PlaySound()
+				}
+			})
+		}
 	})
 
 	volumePreviewCtrl := gtk.NewGestureClick()
 	volumePreviewCtrl.SetPropagationPhase(gtk.PhaseCapture)
 	volumePreviewCtrl.ConnectReleased(func(_ int, _ float64, _ float64) {
-		go func() { _ = util.PlaySound() }()
+		go func() { _ = core.PlaySound() }()
 	})
 
 	volumeRow.SetTitle("Sound volume")
-	volumeRow.SetSubtitle(fmt.Sprintf("%v%%", int(util.Overrides.Volume*100)))
-	volumeRow.SetSensitive(util.UserPrefs.EnableSound)
+	volumeRow.SetSubtitle(fmt.Sprintf("%v%%", int(core.Overrides.Volume*100)))
+	volumeRow.SetVisible(core.UserPrefs.EnableSound)
 	volumeRow.AddSuffix(volumeSlider)
 	volumeRow.AddController(volumePreviewCtrl)
 
-	volumeSlider.SetValue(util.Overrides.Volume * 100)
+	volumeSlider.SetValue(core.Overrides.Volume * 100)
 	volumeSlider.SetSizeRequest(sliderWidth, 0)
 	volumeSlider.ConnectChangeValue(func(scroll gtk.ScrollType, value float64) (ok bool) {
 		// GTK (probably) bug, scale goes up to 110 when using mouse wheel
@@ -165,53 +235,37 @@ func populateTimerGroup(group *adw.PreferencesGroup) {
 			volumeSlider.SetValue(value)
 		}
 
-		util.SetVolume(value / 100)
-		volumeRow.SetSubtitle(fmt.Sprintf("%v%%", int(util.Overrides.Volume*100)))
+		core.SetVolume(value / 100)
+		volumeRow.SetSubtitle(fmt.Sprintf("%v%%", int(core.Overrides.Volume*100)))
 		return false
 	})
 
 	notificationSwitch := adw.NewSwitchRow()
 	notificationSwitch.SetTitle("Enable notification")
-	notificationSwitch.SetActive(util.UserPrefs.ShouldNotify)
+	notificationSwitch.SetActive(core.UserPrefs.ShouldNotify)
 	notificationSwitch.Connect("notify::active", func() {
-		util.SetEnableNotification(notificationSwitch.Active())
+		core.SetEnableNotification(notificationSwitch.Active())
 		textEntry.SetSensitive(notificationSwitch.Active())
 	})
 
-	titleEntry := adw.NewEntryRow()
-	titleEntry.SetTitle("Default title")
-	titleEntry.SetText(util.UserPrefs.DefaultTitle)
-	titleEntry.ConnectChanged(func() {
-		util.SetDefaultTitle(titleEntry.Text())
-	})
-
-	titleSwitch := adw.NewSwitchRow()
-	titleSwitch.SetTitle("Title in UI")
-	titleSwitch.SetSubtitle("Requires restart")
-	titleSwitch.SetActive(util.UserPrefs.ShowTitle)
-	titleSwitch.Connect("notify::active", func() {
-		util.SetShowTitle(titleSwitch.Active())
-	})
-
 	textEntry.SetTitle("Default notification text")
-	textEntry.SetText(util.UserPrefs.DefaultText)
-	textEntry.SetSensitive(util.UserPrefs.ShouldNotify)
+	textEntry.SetText(core.UserPrefs.DefaultText)
+	textEntry.SetSensitive(core.UserPrefs.ShouldNotify)
 	textEntry.ConnectChanged(func() {
-		util.SetDefaultText(textEntry.Text())
+		core.SetDefaultText(textEntry.Text())
 	})
 
 	group.Add(soundSwitch)
+	group.Add(customSoundSwitch)
 	group.Add(volumeRow)
 	group.Add(notificationSwitch)
-	group.Add(titleEntry)
-	group.Add(titleSwitch)
 	group.Add(textEntry)
 }
 
 func populateVisualsGroup(group *adw.PreferencesGroup) {
-	color, err := util.RGBAFromHex(util.Overrides.Color)
+	color, err := core.RGBAFromHex(core.Overrides.Color)
 	if err != nil {
-		log.Fatalf("unexpected: nil color, %v (%s)", err, util.UserPrefs.ProgressColor)
+		log.Fatalf("unexpected: nil color, %v (%s)", err, core.UserPrefs.ProgressColor)
 	}
 
 	dialog := gtk.NewColorDialog()
@@ -225,39 +279,43 @@ func populateVisualsGroup(group *adw.PreferencesGroup) {
 	colorRow.SetTitle("Progress color")
 
 	colorSwitch.Connect("notify", func() {
-		util.SetProgressColor(util.HexFromRGBA(colorSwitch.RGBA()))
+		core.SetProgressColor(core.HexFromRGBA(colorSwitch.RGBA()))
 	})
 
 	roundedSwitch := adw.NewSwitchRow()
 	roundedSwitch.SetTitle("Rounded corners")
-	roundedSwitch.SetActive(util.UserPrefs.Rounded)
+	roundedSwitch.SetActive(core.UserPrefs.Rounded)
 	roundedSwitch.Connect("notify::active", func() {
-		util.SetRounded(roundedSwitch.Active())
+		core.SetRounded(roundedSwitch.Active())
 	})
 
 	shadowSwitch := adw.NewSwitchRow()
 	shadowSwitch.SetTitle("Shadow")
-	shadowSwitch.SetActive(util.UserPrefs.Shadow)
+	shadowSwitch.SetActive(core.UserPrefs.Shadow)
 	shadowSwitch.Connect("notify::active", func() {
-		util.SetShadow(shadowSwitch.Active())
+		core.SetShadow(shadowSwitch.Active())
 	})
 
 	lowFPSSwitch := adw.NewSwitchRow()
-	lowFPSSwitch.SetTitle("Lower FPS")
+	lowFPSSwitch.SetTitle("1 FPS mode")
 	lowFPSSwitch.SetSubtitleLines(2)
-	lowFPSSwitch.SetSubtitle(fmt.Sprintf("Does not affect preview\nCurrently: %d FPS", util.CalculateFps()))
+	lowFPSSwitch.SetSubtitle(fmt.Sprintf("Does not affect preview"))
 	lowFPSSwitch.SetHasTooltip(true)
-	lowFPSSwitch.SetTooltipText("On Plasma, FPS > 6 causes flickering in the media player widget. Some may experience this even with FPS <= 6.")
-	lowFPSSwitch.SetActive(util.UserPrefs.LowFPS)
+	lowFPSSwitch.SetActive(core.UserPrefs.LowFPS)
 	lowFPSSwitch.Connect("notify::active", func() {
-		util.SetLowFPS(lowFPSSwitch.Active())
-		lowFPSSwitch.SetSubtitle(fmt.Sprintf("Does not affect preview\nCurrently: %d FPS", util.CalculateFps()))
+		core.SetLowFPS(lowFPSSwitch.Active())
 	})
 
 	group.Add(colorRow)
 	group.Add(roundedSwitch)
-	group.Add(shadowSwitch)
-	group.Add(lowFPSSwitch)
+
+	if core.IsGnome || core.IsPlasma {
+		group.Add(shadowSwitch)
+	}
+
+	if core.IsGnome {
+		group.Add(lowFPSSwitch)
+	}
 }
 
 func populatePresetsGroup(group *adw.PreferencesGroup) {
@@ -267,26 +325,26 @@ func populatePresetsGroup(group *adw.PreferencesGroup) {
 
 	winSizeSwitch := adw.NewSwitchRow()
 	winSizeSwitch.SetTitle("Remember window size")
-	winSizeSwitch.SetActive(util.UserPrefs.RememberWinSize)
+	winSizeSwitch.SetActive(core.UserPrefs.RememberWinSize)
 	winSizeSwitch.Connect("notify::active", func() {
-		util.SetRememberWindowSize(winSizeSwitch.Active())
+		core.SetRememberWindowSize(winSizeSwitch.Active())
 	})
 
 	presetsOnRightSwitch = adw.NewSwitchRow()
 	presetsOnRightSwitch.SetTitle("Presets on right side")
 	presetsOnRightSwitch.SetSubtitle("Requires restart")
-	presetsOnRightSwitch.SetSensitive(util.UserPrefs.ShowPresets)
-	presetsOnRightSwitch.SetActive(util.UserPrefs.PresetsOnRight)
+	presetsOnRightSwitch.SetSensitive(core.UserPrefs.ShowPresets)
+	presetsOnRightSwitch.SetActive(core.UserPrefs.PresetsOnRight)
 	presetsOnRightSwitch.Connect("notify::active", func() {
-		util.SetPresetsOnRight(presetsOnRightSwitch.Active())
+		core.SetPresetsOnRight(presetsOnRightSwitch.Active())
 	})
 
 	showPresetsSwitch := adw.NewSwitchRow()
 	showPresetsSwitch.SetTitle("Show presets")
 	showPresetsSwitch.SetSubtitle("Requires restart")
-	showPresetsSwitch.SetActive(util.UserPrefs.ShowPresets)
+	showPresetsSwitch.SetActive(core.UserPrefs.ShowPresets)
 	showPresetsSwitch.Connect("notify::active", func() {
-		util.SetShowPresets(showPresetsSwitch.Active())
+		core.SetShowPresets(showPresetsSwitch.Active())
 		presetsOnRightSwitch.SetSensitive(showPresetsSwitch.Active())
 		defaultPresetSelect.SetSensitive(showPresetsSwitch.Active())
 		activatePresetSwitch.SetSensitive(showPresetsSwitch.Active())
@@ -299,19 +357,19 @@ func populatePresetsGroup(group *adw.PreferencesGroup) {
 	defaultPresetSelect.SetActivatable(true)
 	defaultPresetSelect.SetSensitive(showPresetsSwitch.Active())
 	defaultPresetSelect.Connect("notify::selected", func() {
-		preset := util.UserPrefs.Presets[defaultPresetSelect.Selected()]
-		util.SetDefaultPreset(preset)
+		preset := core.UserPrefs.Presets[defaultPresetSelect.Selected()]
+		core.SetDefaultPreset(preset)
 	})
 
 	activatePresetSwitch.SetTitle("Activate automatically")
-	activatePresetSwitch.SetSensitive(util.UserPrefs.ShowPresets)
-	activatePresetSwitch.SetActive(util.UserPrefs.ActivatePreset)
+	activatePresetSwitch.SetSensitive(core.UserPrefs.ShowPresets)
+	activatePresetSwitch.SetActive(core.UserPrefs.ActivatePreset)
 	activatePresetSwitch.Connect("notify::active", func() {
-		util.SetActivatePreset(activatePresetSwitch.Active())
+		core.SetActivatePreset(activatePresetSwitch.Active())
 	})
 
 	presetsBox = gtk.NewListBox()
-	presetsBox.SetVisible(util.UserPrefs.ShowPresets)
+	presetsBox.SetVisible(core.UserPrefs.ShowPresets)
 	presetsBox.AddCSSClass("presets-list")
 	presetsBox.SetVExpand(true)
 	presetsBox.SetOverflow(gtk.OverflowHidden)
@@ -326,8 +384,8 @@ func populatePresetsGroup(group *adw.PreferencesGroup) {
 	newPresetBtn.AddCSSClass("add-preset-btn")
 	newPresetBtn.SetVisible(showPresetsSwitch.Active())
 	newPresetBtn.ConnectClicked(func() {
-		presets := append(util.UserPrefs.Presets, "00:00")
-		util.SetPresets(presets)
+		presets := append(core.UserPrefs.Presets, "00:00")
+		core.SetPresets(presets)
 		RenderPresets([]string{"00:00"})
 	})
 
@@ -345,28 +403,28 @@ func populatePresetsGroup(group *adw.PreferencesGroup) {
 }
 
 func populateDefaultPresetSelect() {
-	if len(util.UserPrefs.Presets) == 0 {
+	if len(core.UserPrefs.Presets) == 0 {
 		defaultPresetSelect.SetModel(gtk.NewStringList(make([]string, 0)))
 		return
 	}
 
-	selectedPos := slices.Index(util.UserPrefs.Presets, util.UserPrefs.DefaultPreset)
+	selectedPos := slices.Index(core.UserPrefs.Presets, core.UserPrefs.DefaultPreset)
 	i := uint(selectedPos)
 	if selectedPos == -1 {
 		i = 0
 	}
 
-	defaultPresetSelect.SetModel(gtk.NewStringList(util.UserPrefs.Presets))
+	defaultPresetSelect.SetModel(gtk.NewStringList(core.UserPrefs.Presets))
 	defaultPresetSelect.SetSelected(i)
 
-	preset := util.UserPrefs.Presets[i]
-	util.SetDefaultPreset(preset)
+	preset := core.UserPrefs.Presets[i]
+	core.SetDefaultPreset(preset)
 }
 
 func RenderPresets(toAdd []string) {
 	newPresets := toAdd
 	if len(toAdd) == 0 {
-		newPresets = util.UserPrefs.Presets
+		newPresets = core.UserPrefs.Presets
 	}
 
 	for _, preset := range newPresets {
@@ -429,7 +487,7 @@ func RenderPresets(toAdd []string) {
 			}
 
 			var presets []string
-			for _idx, p := range util.UserPrefs.Presets {
+			for _idx, p := range core.UserPrefs.Presets {
 				if container.Index() == _idx {
 					presets = append(presets, newText)
 					continue
@@ -438,12 +496,12 @@ func RenderPresets(toAdd []string) {
 				presets = append(presets, p)
 			}
 
-			if container.Index() == slices.Index(util.UserPrefs.Presets, util.UserPrefs.DefaultPreset) {
-				util.SetDefaultPreset(newText)
+			if container.Index() == slices.Index(core.UserPrefs.Presets, core.UserPrefs.DefaultPreset) {
+				core.SetDefaultPreset(newText)
 			}
 
 			title.SetText(newText)
-			util.SetPresets(presets)
+			core.SetPresets(presets)
 
 			populateDefaultPresetSelect()
 		}
@@ -455,7 +513,7 @@ func RenderPresets(toAdd []string) {
 		keyCtrl := gtk.NewEventControllerKey()
 		keyCtrl.SetPropagationPhase(gtk.PhaseCapture)
 		keyCtrl.ConnectKeyPressed(func(keyval, keycode uint, state gdk.ModifierType) (ok bool) {
-			if slices.Contains(util.KeyEnter.GdkKeyvals(), keyval) {
+			if slices.Contains(core.KeyEnter.GdkKeyvals(), keyval) {
 				formatTitle()
 			}
 
@@ -475,7 +533,7 @@ func RenderPresets(toAdd []string) {
 		btn.AddCSSClass("list-btn")
 		btn.ConnectClicked(func() {
 			var presets []string
-			for _idx, p := range util.UserPrefs.Presets {
+			for _idx, p := range core.UserPrefs.Presets {
 				if container.Index() == _idx {
 					continue
 				}
@@ -483,7 +541,7 @@ func RenderPresets(toAdd []string) {
 				presets = append(presets, p)
 			}
 
-			util.SetPresets(presets)
+			core.SetPresets(presets)
 			presetsBox.Remove(container)
 			populateDefaultPresetSelect()
 		})

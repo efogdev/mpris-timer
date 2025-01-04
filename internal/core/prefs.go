@@ -1,4 +1,4 @@
-package util
+package core
 
 import (
 	"fmt"
@@ -19,8 +19,10 @@ type Prefs struct {
 	DefaultPreset   string
 	DefaultTitle    string
 	DefaultText     string
+	SoundFilename   string
 	ActivatePreset  bool
 	RememberWinSize bool
+	ForceTrayIcon   bool
 	Shadow          bool
 	Rounded         bool
 	LowFPS          bool
@@ -50,11 +52,13 @@ func LoadPrefs() {
 		DefaultPreset:   settings.String("default-preset"),
 		DefaultTitle:    settings.String("default-title"),
 		DefaultText:     settings.String("default-text"),
+		SoundFilename:   settings.String("sound-filename"),
 		ActivatePreset:  settings.Boolean("activate-preset"),
 		RememberWinSize: settings.Boolean("remember-window-size"),
 		Shadow:          settings.Boolean("shadow"),
 		Rounded:         settings.Boolean("rounded"),
 		LowFPS:          settings.Boolean("low-fps"),
+		ForceTrayIcon:   settings.Boolean("force-tray-icon"),
 		ShowTitle:       settings.Boolean("show-title"),
 		WindowWidth:     settings.Uint("window-width"),
 		WindowHeight:    settings.Uint("window-height"),
@@ -135,6 +139,12 @@ func SetLowFPS(value bool) {
 	settings.SetBoolean("low-fps", value)
 }
 
+func SetForceTrayIcon(value bool) {
+	Overrides.ForceTrayIcon = value
+	UserPrefs.ForceTrayIcon = value
+	settings.SetBoolean("force-tray-icon", value)
+}
+
 func SetProgressColor(value string) {
 	if !regexp.MustCompile(`^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$`).MatchString(value) {
 		return
@@ -159,6 +169,17 @@ func SetDefaultTitle(value string) {
 	Overrides.Title = value
 	UserPrefs.DefaultTitle = value
 	settings.SetString("default-title", value)
+}
+
+func SetSoundFilename(value string) {
+	Overrides.SoundFilename = value
+	UserPrefs.SoundFilename = value
+	settings.SetString("sound-filename", value)
+
+	err := LoadSound()
+	if err != nil {
+		SetSoundFilename("")
+	}
 }
 
 func SetDefaultText(value string) {

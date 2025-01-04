@@ -1,4 +1,4 @@
-package util
+package core
 
 import (
 	"github.com/diamondburned/gotk4/pkg/gdk/v4"

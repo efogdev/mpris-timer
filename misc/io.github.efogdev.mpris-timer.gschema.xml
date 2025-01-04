@@ -76,6 +76,14 @@
 		<key name="cache-prefix" type="s">
 			<default>'default'</default>
 		</key>
+
+		<key name="sound-filename" type="s">
+			<default>''</default>
+		</key>
+
+		<key name="force-tray-icon" type="b">
+			<default>false</default>
+		</key>
 		
 	</schema>
 </schemalist>

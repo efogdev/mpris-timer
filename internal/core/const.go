@@ -1,8 +1,9 @@
-package util
+package core
 
 import (
 	"github.com/diamondburned/gotk4/pkg/glib/v2"
 	"log"
+	"math"
 	"os"
 	"path"
 	"strings"
@@ -12,9 +13,10 @@ import (
 const (
 	AppId   = "io.github.efogdev.mpris-timer"
 	AppName = "Play Timer"
-	BaseFPS = 30
 
-	plasmaFPS     = 6
+	gnomeFPS = 30
+	baseFPS  = 1
+
 	width         = 128
 	height        = 128
 	padding       = 8
@@ -37,6 +39,7 @@ const svgTemplate = `
 
 var (
 	IsPlasma bool
+	IsGnome  bool
 	CacheDir string
 	DataDir  string
 	svgTpl   *template.Template
@@ -61,7 +64,8 @@ type svgParams struct {
 }
 
 func init() {
-	IsPlasma = os.Getenv("XDG_CURRENT_DESKTOP") == "KDE"
+	IsPlasma = strings.ToUpper(os.Getenv("XDG_CURRENT_DESKTOP")) == "KDE"
+	IsGnome = strings.ToUpper(os.Getenv("XDG_CURRENT_DESKTOP")) == "GNOME"
 
 	var err error
 	svgTpl, err = tpl.Parse(svgTemplate)
@@ -82,16 +86,16 @@ func init() {
 }
 
 func CalculateFps() int {
-	fps := BaseFPS
-	if IsPlasma {
-		fps = plasmaFPS
+	fps := baseFPS
+	if IsGnome {
+		fps = gnomeFPS
 	}
-	if Overrides.LowFPS {
-		log.Println("lower fps requested")
-		fps /= 2
+	if Overrides.LowFPS && fps > 1 {
+		log.Println("1 fps mode requested")
+		fps = 1
 	}
 
-	return fps
+	return int(math.Max(float64(fps), 1))
 }
 
 func bool2int(b bool) int {

@@ -4,7 +4,7 @@ import (
 	"github.com/diamondburned/gotk4/pkg/gdk/v4"
 	"github.com/diamondburned/gotk4/pkg/gtk/v4"
 	"log"
-	"mpris-timer/internal/util"
+	"mpris-timer/internal/core"
 	"time"
 )
 
@@ -43,7 +43,7 @@ func renderPreview(box *gtk.Image) {
 			continue
 		}
 
-		imgFilename, err := util.MakeProgressCircle(percent)
+		imgFilename, err := core.MakeProgressCircle(percent)
 		if err != nil {
 			log.Printf("render preview: %v", err)
 			continue

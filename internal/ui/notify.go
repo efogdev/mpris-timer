@@ -2,25 +2,21 @@ package ui
 
 import (
 	"context"
-	_ "embed"
 	"github.com/diamondburned/gotk4/pkg/gio/v2"
 	"github.com/diamondburned/gotk4/pkg/glib/v2"
 	"github.com/efogdev/gotk4-adwaita/pkg/adw"
 	"github.com/google/uuid"
 	"log"
-	"mpris-timer/internal/util"
+	"mpris-timer/internal/core"
 )
-
-//go:embed res/icon.svg
-var icon []byte
 
 func Notify(title string, text string) {
 	log.Printf("notify: %s", title)
 
-	if !util.Overrides.UseUI {
-		sendNotification(util.App, title, text)
+	if !core.Overrides.UseUI {
+		sendNotification(core.App, title, text)
 	} else {
-		nApp := adw.NewApplication(util.AppId, gio.ApplicationNonUnique)
+		nApp := adw.NewApplication(core.AppId, gio.ApplicationNonUnique)
 		nApp.ConnectActivate(func() {
 			sendNotification(nApp, title, text)
 		})

@@ -1,3 +1,8 @@
+# fyne.io/systray v1.11.0
+## explicit; go 1.19
+fyne.io/systray
+fyne.io/systray/internal/generated/menu
+fyne.io/systray/internal/generated/notifier
 # github.com/KarpelesLab/weak v0.1.1
 ## explicit; go 1.18
 github.com/KarpelesLab/weak
@@ -11,6 +16,7 @@ github.com/diamondburned/gotk4/pkg/core/gcancel
 github.com/diamondburned/gotk4/pkg/core/gdebug
 github.com/diamondburned/gotk4/pkg/core/gerror
 github.com/diamondburned/gotk4/pkg/core/gextras
+github.com/diamondburned/gotk4/pkg/core/gioutil
 github.com/diamondburned/gotk4/pkg/core/glib
 github.com/diamondburned/gotk4/pkg/core/intern
 github.com/diamondburned/gotk4/pkg/core/slab
@@ -35,6 +41,8 @@ github.com/efogdev/gotk4-adwaita/pkg/adw
 # github.com/godbus/dbus/v5 v5.1.0
 ## explicit; go 1.12
 github.com/godbus/dbus/v5
+github.com/godbus/dbus/v5/introspect
+github.com/godbus/dbus/v5/prop
 # github.com/google/uuid v1.6.0
 ## explicit
 github.com/google/uuid
@@ -54,12 +62,47 @@ github.com/hajimehoshi/go-mp3/internal/sideinfo
 github.com/hajimehoshi/oto/v2
 github.com/hajimehoshi/oto/v2/internal/mux
 github.com/hajimehoshi/oto/v2/internal/oboe
+# github.com/srwiley/oksvg v0.0.0-20221011165216-be6e8873101c
+## explicit; go 1.17
+github.com/srwiley/oksvg
+# github.com/srwiley/rasterx v0.0.0-20220730225603-2ab79fcdd4ef
+## explicit; go 1.17
+github.com/srwiley/rasterx
 # go4.org/unsafe/assume-no-moving-gc v0.0.0-20231121144256-b99613f794b6
 ## explicit; go 1.11
 go4.org/unsafe/assume-no-moving-gc
-# golang.org/x/sync v0.9.0
+# golang.org/x/image v0.23.0
+## explicit; go 1.18
+golang.org/x/image/colornames
+golang.org/x/image/math/fixed
+golang.org/x/image/vector
+# golang.org/x/net v0.33.0
+## explicit; go 1.18
+golang.org/x/net/html
+golang.org/x/net/html/atom
+golang.org/x/net/html/charset
+# golang.org/x/sync v0.10.0
 ## explicit; go 1.18
 golang.org/x/sync/singleflight
-# golang.org/x/sys v0.27.0
+# golang.org/x/sys v0.28.0
 ## explicit; go 1.18
 golang.org/x/sys/windows
+# golang.org/x/text v0.21.0
+## explicit; go 1.18
+golang.org/x/text/encoding
+golang.org/x/text/encoding/charmap
+golang.org/x/text/encoding/htmlindex
+golang.org/x/text/encoding/internal
+golang.org/x/text/encoding/internal/identifier
+golang.org/x/text/encoding/japanese
+golang.org/x/text/encoding/korean
+golang.org/x/text/encoding/simplifiedchinese
+golang.org/x/text/encoding/traditionalchinese
+golang.org/x/text/encoding/unicode
+golang.org/x/text/internal/language
+golang.org/x/text/internal/language/compact
+golang.org/x/text/internal/tag
+golang.org/x/text/internal/utf8internal
+golang.org/x/text/language
+golang.org/x/text/runes
+golang.org/x/text/transform

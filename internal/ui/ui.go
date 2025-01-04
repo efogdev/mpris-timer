@@ -6,13 +6,19 @@ import (
 	"github.com/diamondburned/gotk4/pkg/gtk/v4"
 	"github.com/efogdev/gotk4-adwaita/pkg/adw"
 	"log"
-	"mpris-timer/internal/util"
+	"mpris-timer/internal/core"
 	"os"
 	"slices"
 )
 
 //go:embed style.css
 var cssString string
+
+//go:embed res/icon.svg
+var icon []byte
+
+//go:embed res/icon.png
+var iconPNG []byte
 
 const (
 	minWidth         = 350
@@ -35,7 +41,7 @@ var (
 func Init() {
 	log.Println("UI window requested")
 
-	util.App.ConnectActivate(func() {
+	core.App.ConnectActivate(func() {
 		prov := gtk.NewCSSProvider()
 		prov.ConnectParsingError(func(sec *gtk.CSSSection, err error) {
 			log.Printf("CSS error: %v", err)
@@ -44,16 +50,16 @@ func Init() {
 		prov.LoadFromString(cssString)
 		gtk.StyleContextAddProviderForDisplay(gdk.DisplayGetDefault(), prov, gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
 
-		NewTimePicker(util.App)
+		NewTimePicker(core.App)
 	})
 
-	if code := util.App.Run(nil); code > 0 {
+	if code := core.App.Run(nil); code > 0 {
 		os.Exit(code)
 	}
 }
 
 func NewTimePicker(app *adw.Application) {
-	util.Overrides.Duration = 0
+	core.Overrides.Duration = 0
 	win = adw.NewApplicationWindow(&app.Application)
 	handle := gtk.NewWindowHandle()
 	body := adw.NewOverlaySplitView()
@@ -62,10 +68,10 @@ func NewTimePicker(app *adw.Application) {
 	escCtrl := gtk.NewEventControllerKey()
 	escCtrl.SetPropagationPhase(gtk.PhaseCapture)
 	escCtrl.ConnectKeyPressed(func(keyval, keycode uint, state gdk.ModifierType) (ok bool) {
-		isEsc := slices.Contains(util.KeyEsc.GdkKeyvals(), keyval)
-		isCtrlQ := slices.Contains(util.KeyQ.GdkKeyvals(), keyval) && state == gdk.ControlMask
-		isCtrlW := slices.Contains(util.KeyW.GdkKeyvals(), keyval) && state == gdk.ControlMask
-		isCtrlD := slices.Contains(util.KeyD.GdkKeyvals(), keyval) && state == gdk.ControlMask
+		isEsc := slices.Contains(core.KeyEsc.GdkKeyvals(), keyval)
+		isCtrlQ := slices.Contains(core.KeyQ.GdkKeyvals(), keyval) && state == gdk.ControlMask
+		isCtrlW := slices.Contains(core.KeyW.GdkKeyvals(), keyval) && state == gdk.ControlMask
+		isCtrlD := slices.Contains(core.KeyD.GdkKeyvals(), keyval) && state == gdk.ControlMask
 
 		if !isEsc && !isCtrlQ && !isCtrlW && !isCtrlD {
 			return false
@@ -79,9 +85,9 @@ func NewTimePicker(app *adw.Application) {
 
 	win.AddController(escCtrl)
 	win.SetContent(handle)
-	win.SetTitle(util.AppName)
+	win.SetTitle(core.AppName)
 	win.SetSizeRequest(minWidth, getMinHeight())
-	win.SetDefaultSize(int(util.UserPrefs.WindowWidth), int(util.UserPrefs.WindowHeight))
+	win.SetDefaultSize(int(core.UserPrefs.WindowWidth), int(core.UserPrefs.WindowHeight))
 
 	win.ConnectCloseRequest(func() (ok bool) {
 		saveSize()
@@ -95,7 +101,7 @@ func NewTimePicker(app *adw.Application) {
 	body.SetVExpand(true)
 	body.SetHExpand(true)
 
-	if util.UserPrefs.PresetsOnRight {
+	if core.UserPrefs.PresetsOnRight {
 		body.SetSidebarPosition(gtk.PackEnd)
 	} else {
 		body.SetSidebarPosition(gtk.PackStart)
@@ -106,7 +112,7 @@ func NewTimePicker(app *adw.Application) {
 	body.SetSidebarWidthFraction(.36)
 	body.SetEnableShowGesture(true)
 	body.SetEnableHideGesture(true)
-	body.SetShowSidebar(util.UserPrefs.ShowPresets && len(util.UserPrefs.Presets) > 0)
+	body.SetShowSidebar(core.UserPrefs.ShowPresets && len(core.UserPrefs.Presets) > 0)
 	body.SetMinSidebarWidth(40)
 
 	win.SetVisible(true)
@@ -117,7 +123,7 @@ func NewTimePicker(app *adw.Application) {
 		initialPreset.Activate()
 		initialPreset.GrabFocus()
 
-		if !util.UserPrefs.ActivatePreset {
+		if !core.UserPrefs.ActivatePreset {
 			minLabel.SetText("00")
 			secLabel.SetText("00")
 		} else {
@@ -143,7 +149,7 @@ func NewSidebar() *adw.NavigationPage {
 	flowBox.SetRowSpacing(16)
 	flowBox.AddCSSClass("flow-box")
 
-	for idx, preset := range util.UserPrefs.Presets {
+	for idx, preset := range core.UserPrefs.Presets {
 		label := gtk.NewLabel(preset)
 		label.SetCursorFromName("pointer")
 		label.AddCSSClass("preset-lbl")
@@ -152,15 +158,15 @@ func NewSidebar() *adw.NavigationPage {
 		flowBox.Append(label)
 
 		onActivate := func() {
-			time := util.TimeFromPreset(preset)
+			time := core.TimeFromPreset(preset)
 
 			if hrsLabel == nil || minLabel == nil || secLabel == nil {
 				return
 			}
 
-			hrsLabel.SetText(util.NumToLabelText(time.Hour()))
-			minLabel.SetText(util.NumToLabelText(time.Minute()))
-			secLabel.SetText(util.NumToLabelText(time.Second()))
+			hrsLabel.SetText(core.NumToLabelText(time.Hour()))
+			minLabel.SetText(core.NumToLabelText(time.Minute()))
+			secLabel.SetText(core.NumToLabelText(time.Second()))
 			startBtn.SetCanFocus(true)
 			startBtn.GrabFocus()
 		}
@@ -174,7 +180,7 @@ func NewSidebar() *adw.NavigationPage {
 		child.ConnectActivate(onActivate)
 		child.AddController(mouseCtrl)
 
-		if preset == util.UserPrefs.DefaultPreset {
+		if preset == core.UserPrefs.DefaultPreset {
 			flowBox.SelectChild(child)
 			initialPreset = child
 		}
@@ -189,12 +195,12 @@ func NewSidebar() *adw.NavigationPage {
 			// I don't like this solution but idk how to do it better
 			x, _, w, _, _ := child.Bounds()
 
-			if slices.Contains(util.KeyLeft.GdkKeyvals(), keyval) && x == 0 && util.UserPrefs.PresetsOnRight {
+			if slices.Contains(core.KeyLeft.GdkKeyvals(), keyval) && x == 0 && core.UserPrefs.PresetsOnRight {
 				secLabel.GrabFocus()
 				return true
 			}
 
-			if slices.Contains(util.KeyRight.GdkKeyvals(), keyval) && (x+w == flowBox.Width()) && !util.UserPrefs.PresetsOnRight {
+			if slices.Contains(core.KeyRight.GdkKeyvals(), keyval) && (x+w == flowBox.Width()) && !core.UserPrefs.PresetsOnRight {
 				minLabel.GrabFocus()
 				return true
 			}
@@ -214,12 +220,12 @@ func NewSidebar() *adw.NavigationPage {
 	kbCtrl := gtk.NewEventControllerKey()
 	kbCtrl.SetPropagationPhase(gtk.PhaseBubble)
 	kbCtrl.ConnectKeyPressed(func(keyval, keycode uint, state gdk.ModifierType) (ok bool) {
-		isNumber := util.IsGdkKeyvalNumber(keyval)
+		isNumber := core.IsGdkKeyvalNumber(keyval)
 		if !isNumber {
 			return false
 		}
 
-		minLabel.SetText(util.ParseKeyval(keyval))
+		minLabel.SetText(core.ParseKeyval(keyval))
 		minLabel.Activate()
 		minLabel.GrabFocus()
 		minLabel.SelectRegion(1, 1)
@@ -247,7 +253,7 @@ func NewContent() *adw.NavigationPage {
 	titleLabel.SetHExpand(true)
 	titleLabel.AddCSSClass("entry")
 	titleLabel.AddCSSClass("title-entry")
-	titleLabel.SetText(util.Overrides.Title)
+	titleLabel.SetText(core.Overrides.Title)
 	titleLabel.SetAlignment(.5)
 	titleLabel.SetSensitive(false)
 
@@ -256,8 +262,8 @@ func NewContent() *adw.NavigationPage {
 	rightKeyCtrl.ConnectKeyPressed(func(keyval, keycode uint, state gdk.ModifierType) (ok bool) {
 		_, pos, sel := titleLabel.SelectionBounds()
 		if state == gdk.NoModifierMask && initialPreset != nil && !sel {
-			toRight := util.UserPrefs.PresetsOnRight && slices.Contains(util.KeyRight.GdkKeyvals(), keyval) && pos == len(titleLabel.Text())
-			toLeft := !util.UserPrefs.PresetsOnRight && slices.Contains(util.KeyLeft.GdkKeyvals(), keyval) && pos == 0
+			toRight := core.UserPrefs.PresetsOnRight && slices.Contains(core.KeyRight.GdkKeyvals(), keyval) && pos == len(titleLabel.Text())
+			toLeft := !core.UserPrefs.PresetsOnRight && slices.Contains(core.KeyLeft.GdkKeyvals(), keyval) && pos == 0
 			if toRight || toLeft {
 				initialPreset.GrabFocus()
 				return true
@@ -269,7 +275,7 @@ func NewContent() *adw.NavigationPage {
 
 	titleLabel.AddController(rightKeyCtrl)
 	titleLabel.ConnectChanged(func() {
-		util.Overrides.Title = titleLabel.Text()
+		core.Overrides.Title = titleLabel.Text()
 	})
 
 	titleBox := gtk.NewBox(gtk.OrientationHorizontal, 8)
@@ -278,7 +284,7 @@ func NewContent() *adw.NavigationPage {
 	titleBox.SetHExpand(true)
 	titleBox.Append(titleLabel)
 
-	if util.UserPrefs.ShowTitle {
+	if core.UserPrefs.ShowTitle {
 		vBox.Append(titleBox)
 	}
 	vBox.Append(hBox)
@@ -301,7 +307,7 @@ func NewContent() *adw.NavigationPage {
 			return false
 		}
 
-		if !util.UserPrefs.PresetsOnRight && slices.Contains(util.KeyLeft.GdkKeyvals(), keyval) {
+		if !core.UserPrefs.PresetsOnRight && slices.Contains(core.KeyLeft.GdkKeyvals(), keyval) {
 			selected[0].GrabFocus()
 		}
 
@@ -339,10 +345,10 @@ func NewContent() *adw.NavigationPage {
 	startBtn.AddCSSClass("suggested-action")
 
 	startFn := func() {
-		time := util.TimeFromStrings(hrsLabel.Text(), minLabel.Text(), secLabel.Text())
+		time := core.TimeFromStrings(hrsLabel.Text(), minLabel.Text(), secLabel.Text())
 		seconds := time.Hour()*60*60 + time.Minute()*60 + time.Second()
 		if seconds > 0 {
-			util.Overrides.Duration = seconds
+			core.Overrides.Duration = seconds
 			saveSize()
 			win.Close()
 			return
@@ -354,7 +360,7 @@ func NewContent() *adw.NavigationPage {
 	leftKeyCtrl := gtk.NewEventControllerKey()
 	leftKeyCtrl.SetPropagationPhase(gtk.PhaseCapture)
 	leftKeyCtrl.ConnectKeyPressed(func(keyval, keycode uint, state gdk.ModifierType) (ok bool) {
-		if slices.Contains(util.KeyLeft.GdkKeyvals(), keyval) && state == gdk.NoModifierMask {
+		if slices.Contains(core.KeyLeft.GdkKeyvals(), keyval) && state == gdk.NoModifierMask {
 			secLabel.GrabFocus()
 			return true
 		}
@@ -411,7 +417,7 @@ func NewContent() *adw.NavigationPage {
 
 func getMinHeight() int {
 	height := defaultMinHeight
-	if !util.UserPrefs.ShowTitle {
+	if !core.UserPrefs.ShowTitle {
 		height = noTitleMinHeight
 	}
 
@@ -419,7 +425,7 @@ func getMinHeight() int {
 }
 
 func saveSize() {
-	if util.UserPrefs.RememberWinSize {
-		util.SetWindowSize(uint(win.Width()), uint(win.Height()))
+	if core.UserPrefs.RememberWinSize {
+		core.SetWindowSize(uint(win.Width()), uint(win.Height()))
 	}
 }
