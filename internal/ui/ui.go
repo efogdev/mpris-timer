@@ -39,8 +39,6 @@ var (
 )
 
 func Init() {
-	log.Println("UI window requested")
-
 	core.App.ConnectActivate(func() {
 		prov := gtk.NewCSSProvider()
 		prov.ConnectParsingError(func(sec *gtk.CSSSection, err error) {

@@ -50,7 +50,7 @@ func CreateTrayIcon(timer *core.TimerPlayer) {
 	}, func() {
 		systray.Quit()
 	})
-
+ 
 	<-initCh
 	for {
 		select {

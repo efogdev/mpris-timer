@@ -44,6 +44,7 @@ type TimerPlayer struct {
 	objectPath     dbus.ObjectPath
 	conn           *dbus.Conn
 	subscribers    []func(event PropsChangedEvent)
+	lastEvent      *PropsChangedEvent
 }
 
 func NewTimerPlayer(seconds int, name string) (*TimerPlayer, error) {
@@ -310,10 +311,19 @@ func (p *TimerPlayer) broadcast() {
 			continue
 		}
 
-		cb(PropsChangedEvent{
-			Img:      strings.TrimPrefix(p.img, "file://"),
+		prev := p.lastEvent
+		img := strings.TrimPrefix(p.img, "file://")
+		if prev != nil && prev.Img == img && prev.Text == p.progressText && prev.IsPaused == p.isPaused {
+			continue
+		}
+
+		ev := PropsChangedEvent{
+			Img:      img,
 			Text:     p.progressText,
 			IsPaused: p.isPaused,
-		})
+		}
+
+		p.lastEvent = &ev
+		cb(ev)
 	}
 }
