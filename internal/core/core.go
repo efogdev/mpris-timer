@@ -235,6 +235,7 @@ func (p *TimerPlayer) PlayPause() *dbus.Error {
 		"PlaybackStatus": dbus.MakeVariant(p.playbackStatus),
 	})
 
+	p.broadcast()
 	return nil
 }
 
@@ -243,6 +244,7 @@ func (p *TimerPlayer) Previous() *dbus.Error {
 	p.pausedFor = 0
 	p.isPaused = false
 	p.playbackStatus = "Playing"
+	p.broadcast()
 	return nil
 }
 
@@ -320,7 +322,7 @@ func (p *TimerPlayer) broadcast() {
 		ev := PropsChangedEvent{
 			Img:      img,
 			Text:     p.progressText,
-			IsPaused: p.isPaused,
+			IsPaused: p.isPaused && !p.IsFinished,
 		}
 
 		p.lastEvent = &ev
