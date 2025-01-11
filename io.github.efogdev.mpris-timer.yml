@@ -13,8 +13,10 @@ finish-args:
   - --socket=pulseaudio 
   - --share=ipc
   - --device=dri
-  - --talk-name=org.kde.StatusNotifierWatcher # Used for AppIndicator support
-  - --talk-name=org.freedesktop.Notifications # Used for AppIndicator support
+  - --talk-name=org.kde.StatusNotifierWatcher # tray support
+  - --talk-name=org.freedesktop.Notifications # tray support
+  - --own-name=org.kde.StatusNotifierItem-2-1 # tray support
+  - --own-name=org.kde.StatusNotifierItem-3-1 # tray support
 
 modules:
   - name: play-timer

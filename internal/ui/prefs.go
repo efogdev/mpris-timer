@@ -95,6 +95,7 @@ var (
 	presetsOnRightSwitch *adw.SwitchRow
 	defaultPresetSelect  *adw.ComboRow
 	presetsBox           *gtk.ListBox
+	presetsGroup         *adw.PreferencesGroup
 )
 
 func NewPrefsWidgets(parent *gtk.Box) {
@@ -125,8 +126,8 @@ func NewPrefsWidgets(parent *gtk.Box) {
 	previewBox.Append(previewImage)
 	visualsBox.Append(previewBox)
 
-	presetsGroup := adw.NewPreferencesGroup()
-	presetsGroup.SetTitle("Interface")
+	presetsGroup = adw.NewPreferencesGroup()
+	presetsGroup.SetTitle("Presets")
 
 	populateTimerGroup(timerGroup)
 	populateInterfaceGroup(interfaceGroup)
@@ -134,8 +135,8 @@ func NewPrefsWidgets(parent *gtk.Box) {
 	populatePresetsGroup(presetsGroup)
 
 	parent.Append(timerGroup)
-	parent.Append(interfaceGroup)
 	parent.Append(visualsBox)
+	parent.Append(interfaceGroup)
 	parent.Append(presetsGroup)
 }
 
@@ -155,6 +156,34 @@ func populateInterfaceGroup(group *adw.PreferencesGroup) {
 		core.SetShowTitle(titleSwitch.Active())
 	})
 
+	winSizeSwitch := adw.NewSwitchRow()
+	winSizeSwitch.SetTitle("Remember window size")
+	winSizeSwitch.SetActive(core.UserPrefs.RememberWinSize)
+	winSizeSwitch.Connect("notify::active", func() {
+		core.SetRememberWindowSize(winSizeSwitch.Active())
+	})
+
+	showPresetsSwitch := adw.NewSwitchRow()
+	showPresetsSwitch.SetTitle("Show presets")
+	showPresetsSwitch.SetSubtitle("Requires restart")
+	showPresetsSwitch.SetActive(core.UserPrefs.ShowPresets)
+	showPresetsSwitch.Connect("notify::active", func() {
+		core.SetShowPresets(showPresetsSwitch.Active())
+		presetsOnRightSwitch.SetSensitive(showPresetsSwitch.Active())
+		defaultPresetSelect.SetSensitive(showPresetsSwitch.Active())
+		presetsGroup.SetVisible(showPresetsSwitch.Active())
+	})
+	presetsGroup.SetVisible(showPresetsSwitch.Active())
+
+	presetsOnRightSwitch = adw.NewSwitchRow()
+	presetsOnRightSwitch.SetTitle("Presets on right side")
+	presetsOnRightSwitch.SetSubtitle("Requires restart")
+	presetsOnRightSwitch.SetSensitive(core.UserPrefs.ShowPresets)
+	presetsOnRightSwitch.SetActive(core.UserPrefs.PresetsOnRight)
+	presetsOnRightSwitch.Connect("notify::active", func() {
+		core.SetPresetsOnRight(presetsOnRightSwitch.Active())
+	})
+
 	forceTraySwitch := adw.NewSwitchRow()
 	forceTraySwitch.SetTitle("Force tray icon")
 	forceTraySwitch.SetActive(core.UserPrefs.ForceTrayIcon)
@@ -164,6 +193,8 @@ func populateInterfaceGroup(group *adw.PreferencesGroup) {
 
 	group.Add(titleEntry)
 	group.Add(titleSwitch)
+	group.Add(showPresetsSwitch)
+	group.Add(presetsOnRightSwitch)
 	group.Add(forceTraySwitch)
 }
 
@@ -322,50 +353,31 @@ func populatePresetsGroup(group *adw.PreferencesGroup) {
 	defaultPresetSelect = adw.NewComboRow()
 	newPresetBtn := gtk.NewButton()
 	activatePresetSwitch := adw.NewSwitchRow()
-
-	winSizeSwitch := adw.NewSwitchRow()
-	winSizeSwitch.SetTitle("Remember window size")
-	winSizeSwitch.SetActive(core.UserPrefs.RememberWinSize)
-	winSizeSwitch.Connect("notify::active", func() {
-		core.SetRememberWindowSize(winSizeSwitch.Active())
-	})
-
-	presetsOnRightSwitch = adw.NewSwitchRow()
-	presetsOnRightSwitch.SetTitle("Presets on right side")
-	presetsOnRightSwitch.SetSubtitle("Requires restart")
-	presetsOnRightSwitch.SetSensitive(core.UserPrefs.ShowPresets)
-	presetsOnRightSwitch.SetActive(core.UserPrefs.PresetsOnRight)
-	presetsOnRightSwitch.Connect("notify::active", func() {
-		core.SetPresetsOnRight(presetsOnRightSwitch.Active())
-	})
-
-	showPresetsSwitch := adw.NewSwitchRow()
-	showPresetsSwitch.SetTitle("Show presets")
-	showPresetsSwitch.SetSubtitle("Requires restart")
-	showPresetsSwitch.SetActive(core.UserPrefs.ShowPresets)
-	showPresetsSwitch.Connect("notify::active", func() {
-		core.SetShowPresets(showPresetsSwitch.Active())
-		presetsOnRightSwitch.SetSensitive(showPresetsSwitch.Active())
-		defaultPresetSelect.SetSensitive(showPresetsSwitch.Active())
-		activatePresetSwitch.SetSensitive(showPresetsSwitch.Active())
-		presetsBox.SetVisible(showPresetsSwitch.Active())
-		newPresetBtn.SetVisible(showPresetsSwitch.Active())
-	})
+	startOnClickSwitch := adw.NewSwitchRow()
 
 	populateDefaultPresetSelect()
 	defaultPresetSelect.SetTitle("Default preset")
 	defaultPresetSelect.SetActivatable(true)
-	defaultPresetSelect.SetSensitive(showPresetsSwitch.Active())
 	defaultPresetSelect.Connect("notify::selected", func() {
 		preset := core.UserPrefs.Presets[defaultPresetSelect.Selected()]
 		core.SetDefaultPreset(preset)
 	})
 
-	activatePresetSwitch.SetTitle("Activate automatically")
+	activatePresetSwitch.SetTitle("Activate on launch")
 	activatePresetSwitch.SetSensitive(core.UserPrefs.ShowPresets)
 	activatePresetSwitch.SetActive(core.UserPrefs.ActivatePreset)
 	activatePresetSwitch.Connect("notify::active", func() {
 		core.SetActivatePreset(activatePresetSwitch.Active())
+		core.SetStartPresetOnClick(!activatePresetSwitch.Active())
+		startOnClickSwitch.SetActive(!activatePresetSwitch.Active())
+	})
+
+	startOnClickSwitch.SetTitle("Start when selected")
+	startOnClickSwitch.SetActive(core.UserPrefs.StartPresetOnClick)
+	startOnClickSwitch.Connect("notify::active", func() {
+		core.SetStartPresetOnClick(startOnClickSwitch.Active())
+		core.SetActivatePreset(!startOnClickSwitch.Active())
+		activatePresetSwitch.SetActive(!startOnClickSwitch.Active())
 	})
 
 	presetsBox = gtk.NewListBox()
@@ -382,7 +394,6 @@ func populatePresetsGroup(group *adw.PreferencesGroup) {
 
 	newPresetBtn.SetChild(btnContent)
 	newPresetBtn.AddCSSClass("add-preset-btn")
-	newPresetBtn.SetVisible(showPresetsSwitch.Active())
 	newPresetBtn.ConnectClicked(func() {
 		presets := append(core.UserPrefs.Presets, "00:00")
 		core.SetPresets(presets)
@@ -393,11 +404,10 @@ func populatePresetsGroup(group *adw.PreferencesGroup) {
 	footer.SetHAlign(gtk.AlignCenter)
 	footer.Append(newPresetBtn)
 
-	group.Add(winSizeSwitch)
-	group.Add(showPresetsSwitch)
 	group.Add(presetsOnRightSwitch)
 	group.Add(defaultPresetSelect)
 	group.Add(activatePresetSwitch)
+	group.Add(startOnClickSwitch)
 	group.Add(presetsBox)
 	group.Add(footer)
 }

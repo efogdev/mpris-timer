@@ -21,7 +21,7 @@ const (
 	height        = 128
 	padding       = 8
 	strokeWidth   = 16
-	roundedOrigin = -86 // -90 is top center. this looks better IMO
+	roundedOrigin = -87 // -90 is top center. this looks better IMO
 	bgStrokeColor = "#535353"
 )
 

@@ -9,26 +9,27 @@ import (
 )
 
 type Prefs struct {
-	ShowPresets     bool
-	PresetsOnRight  bool
-	Presets         []string
-	ProgressColor   string
-	EnableSound     bool
-	Volume          float64
-	ShouldNotify    bool
-	DefaultPreset   string
-	DefaultTitle    string
-	DefaultText     string
-	SoundFilename   string
-	ActivatePreset  bool
-	RememberWinSize bool
-	ForceTrayIcon   bool
-	Shadow          bool
-	Rounded         bool
-	LowFPS          bool
-	ShowTitle       bool
-	WindowWidth     uint
-	WindowHeight    uint
+	ShowPresets        bool
+	PresetsOnRight     bool
+	Presets            []string
+	ProgressColor      string
+	EnableSound        bool
+	Volume             float64
+	ShouldNotify       bool
+	DefaultPreset      string
+	DefaultTitle       string
+	DefaultText        string
+	SoundFilename      string
+	ActivatePreset     bool
+	RememberWinSize    bool
+	ForceTrayIcon      bool
+	Shadow             bool
+	Rounded            bool
+	LowFPS             bool
+	StartPresetOnClick bool
+	ShowTitle          bool
+	WindowWidth        uint
+	WindowHeight       uint
 }
 
 var (
@@ -42,26 +43,27 @@ func LoadPrefs() {
 	}
 
 	UserPrefs = Prefs{
-		EnableSound:     settings.Boolean("enable-sound"),
-		Volume:          settings.Double("volume"),
-		ShouldNotify:    settings.Boolean("enable-notification"),
-		ShowPresets:     settings.Boolean("show-presets"),
-		PresetsOnRight:  settings.Boolean("presets-on-right"),
-		Presets:         settings.Strv("presets"),
-		ProgressColor:   settings.String("progress-color"),
-		DefaultPreset:   settings.String("default-preset"),
-		DefaultTitle:    settings.String("default-title"),
-		DefaultText:     settings.String("default-text"),
-		SoundFilename:   settings.String("sound-filename"),
-		ActivatePreset:  settings.Boolean("activate-preset"),
-		RememberWinSize: settings.Boolean("remember-window-size"),
-		Shadow:          settings.Boolean("shadow"),
-		Rounded:         settings.Boolean("rounded"),
-		LowFPS:          settings.Boolean("low-fps"),
-		ForceTrayIcon:   settings.Boolean("force-tray-icon"),
-		ShowTitle:       settings.Boolean("show-title"),
-		WindowWidth:     settings.Uint("window-width"),
-		WindowHeight:    settings.Uint("window-height"),
+		EnableSound:        settings.Boolean("enable-sound"),
+		Volume:             settings.Double("volume"),
+		ShouldNotify:       settings.Boolean("enable-notification"),
+		ShowPresets:        settings.Boolean("show-presets"),
+		PresetsOnRight:     settings.Boolean("presets-on-right"),
+		Presets:            settings.Strv("presets"),
+		ProgressColor:      settings.String("progress-color"),
+		DefaultPreset:      settings.String("default-preset"),
+		DefaultTitle:       settings.String("default-title"),
+		DefaultText:        settings.String("default-text"),
+		SoundFilename:      settings.String("sound-filename"),
+		ActivatePreset:     settings.Boolean("activate-preset"),
+		RememberWinSize:    settings.Boolean("remember-window-size"),
+		Shadow:             settings.Boolean("shadow"),
+		Rounded:            settings.Boolean("rounded"),
+		LowFPS:             settings.Boolean("low-fps"),
+		ForceTrayIcon:      settings.Boolean("force-tray-icon"),
+		ShowTitle:          settings.Boolean("show-title"),
+		StartPresetOnClick: settings.Boolean("start-preset-on-click"),
+		WindowWidth:        settings.Uint("window-width"),
+		WindowHeight:       settings.Uint("window-height"),
 	}
 }
 
@@ -92,6 +94,11 @@ func SetShowPresets(value bool) {
 func SetPresetsOnRight(value bool) {
 	UserPrefs.PresetsOnRight = value
 	settings.SetBoolean("presets-on-right", value)
+}
+
+func SetStartPresetOnClick(value bool) {
+	UserPrefs.StartPresetOnClick = value
+	settings.SetBoolean("start-preset-on-click", value)
 }
 
 func SetEnableSound(value bool) {

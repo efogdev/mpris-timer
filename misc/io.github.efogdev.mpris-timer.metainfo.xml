@@ -12,6 +12,12 @@
 	<summary>Native-feeling timers</summary>
 	<content_rating type="oars-1.1" />
 	<releases>
+		<release date="2025-01-11" version="v2.0.4">
+			<description>
+				<p>Release 2.0.4: preferences UI rearrengement, new option to start preset when selected</p>
+			</description>
+		</release>
+		
 		<release date="2025-01-04" version="v2.0">
 			<description>
 				<p>Release 2.0: tray icon to support any environment, custom sound file chooser</p>
@@ -145,6 +151,10 @@
 		<screenshot>
 			<caption>Play Timer on Plasma</caption>
 			<image>https://github.com/user-attachments/assets/3c8d7055-e10b-4730-8468-590ab080f643</image>
+		</screenshot>
+		<screenshot>
+			<caption>Play Timer on Cinnamon</caption>
+			<image>https://github.com/user-attachments/assets/77d107f2-7454-4f36-9ca2-580df93c56c1</image>
 		</screenshot>
 		<screenshot>
 			<caption>Preferences</caption>

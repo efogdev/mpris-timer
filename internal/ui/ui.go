@@ -36,6 +36,7 @@ var (
 	secLabel      *gtk.Entry
 	titleLabel    *gtk.Entry
 	flowBox       *gtk.FlowBox
+	initComplete  bool
 )
 
 func Init() {
@@ -131,6 +132,7 @@ func NewTimePicker(app *adw.Application) {
 
 	titleLabel.SetSensitive(true)
 	win.Present()
+	initComplete = true
 }
 
 func NewSidebar() *adw.NavigationPage {
@@ -165,8 +167,16 @@ func NewSidebar() *adw.NavigationPage {
 			hrsLabel.SetText(core.NumToLabelText(time.Hour()))
 			minLabel.SetText(core.NumToLabelText(time.Minute()))
 			secLabel.SetText(core.NumToLabelText(time.Second()))
-			startBtn.SetCanFocus(true)
-			startBtn.GrabFocus()
+
+			if core.UserPrefs.StartPresetOnClick && initComplete {
+				core.Overrides.Duration = time.Hour()*60*60 + time.Minute()*60 + time.Second()
+				saveSize()
+				win.Close()
+				return
+			} else {
+				startBtn.SetCanFocus(true)
+				startBtn.GrabFocus()
+			}
 		}
 
 		mouseCtrl := gtk.NewGestureClick()
