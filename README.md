@@ -1,4 +1,6 @@
-# Play Timer
+# Play Timer 
+[![Build](https://github.com/efogdev/mpris-timer/actions/workflows/build.yml/badge.svg)](https://github.com/efogdev/mpris-timer/actions/workflows/build.yml)
+
 Timer app pretending to be a media player. 
 
 [![image](https://github.com/user-attachments/assets/75651dc5-de7a-4244-974a-47ee69adac0f)](https://flathub.org/apps/io.github.efogdev.mpris-timer)
