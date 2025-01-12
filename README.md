@@ -1,5 +1,5 @@
 # Play Timer 
-[![Build](https://github.com/efogdev/mpris-timer/actions/workflows/build.yml/badge.svg)](https://github.com/efogdev/mpris-timer/actions/workflows/build.yml)
+[![Build](https://github.com/efogdev/mpris-timer/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/efogdev/mpris-timer/actions/workflows/build.yml)
 
 Timer app pretending to be a media player. 
 
@@ -19,8 +19,6 @@ flatpak install flathub io.github.efogdev.mpris-timer
 
 ## Demo
 ![1](https://github.com/user-attachments/assets/9eab4435-9833-4f39-85e5-9a2f9ec3e75c)
-
-
 
 Play Timer aims to be as keyboard friendly as possible. \
 Use navigation keys (arrows, tab, shift+tab, space, enter) or start inputting numbers right away.
@@ -58,10 +56,10 @@ Use navigation keys (arrows, tab, shift+tab, space, enter) or start inputting nu
 
 ```shell
 # show UI for a red "Oven" timer
-flatpak run io.github.efogdev.mpris-timer -title Oven -color "#FF4200"  
+play-timer -title Oven -color "#FF4200"  
 
 # start a 120s "Tea" timer immediately
-flatpak run io.github.efogdev.mpris-timer -title Tea -rounded=0 -sound=0 -start 120
+play-timer -title Tea -rounded=0 -sound=0 -start 120
 ```
 
 ## Development
@@ -81,6 +79,7 @@ Build:
 ```shell
 go build -tags wayland -o ./.bin/app ./cmd/main.go
 ```
+> There's a Dockerfile to build easily.
 
 Flatpak:
 ```shell
@@ -92,7 +91,7 @@ flatpak run org.flatpak.Builder --force-clean --sandbox --user --install --insta
 [@Tuba2](https://github.com/Tuba2) — app name and icon \
 [@efogdev](https://github.com/efogdev) — oh wait that's me
 
-## ToDo
+## Roadmap
 
-1) Custom sounds
-2) Progress styles
+1) Progress styles
+2) Presets drag&drop in prefs
