@@ -368,16 +368,22 @@ func populatePresetsGroup(group *adw.PreferencesGroup) {
 	activatePresetSwitch.SetActive(core.UserPrefs.ActivatePreset)
 	activatePresetSwitch.Connect("notify::active", func() {
 		core.SetActivatePreset(activatePresetSwitch.Active())
-		core.SetStartPresetOnClick(!activatePresetSwitch.Active())
-		startOnClickSwitch.SetActive(!activatePresetSwitch.Active())
+
+		if activatePresetSwitch.Active() && startOnClickSwitch.Active() {
+			startOnClickSwitch.SetActive(false)
+			core.SetStartPresetOnClick(false)
+		}
 	})
 
 	startOnClickSwitch.SetTitle("Start when selected")
 	startOnClickSwitch.SetActive(core.UserPrefs.StartPresetOnClick)
 	startOnClickSwitch.Connect("notify::active", func() {
 		core.SetStartPresetOnClick(startOnClickSwitch.Active())
-		core.SetActivatePreset(!startOnClickSwitch.Active())
-		activatePresetSwitch.SetActive(!startOnClickSwitch.Active())
+
+		if activatePresetSwitch.Active() && startOnClickSwitch.Active() {
+			activatePresetSwitch.SetActive(false)
+			core.SetActivatePreset(false)
+		}
 	})
 
 	presetsBox = gtk.NewListBox()

@@ -12,6 +12,12 @@
 	<summary>Native-feeling timers</summary>
 	<content_rating type="oars-1.1" />
 	<releases>
+		<release date="2025-01-12" version="v2.0.5">
+			<description>
+				<p>Release 2.0.5: fixed behavior of presets prefs switches</p>
+			</description>
+		</release>
+		
 		<release date="2025-01-11" version="v2.0.4">
 			<description>
 				<p>Release 2.0.4: preferences UI rearrengement, new option to start preset when selected</p>
