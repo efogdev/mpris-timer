@@ -1,0 +1,71 @@
+name: Build
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-x86_64:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.23'
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libglib2.0-dev libgtk-3-dev libwayland-dev
+
+      - name: Build the app for x86_64
+        run: |
+          mkdir -p .bin
+          export GO111MODULE=on
+          export GOBIN=$(pwd)/.bin
+          go build -pgo default.pgo -tags wayland -trimpath -ldflags="-s -w" -o $GOBIN/play-timer-x86_64 ./cmd/main.go
+
+      - name: Verify build output for x86_64
+        run: |
+          if [ ! -f .bin/play-timer-x86_64 ]; then
+            echo "Build failed: play-timer-x86_64 binary not found"
+            exit 1
+          fi
+
+  build-aarch64:
+    runs-on: ubuntu-22.04-arm64
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.23'
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libglib2.0-dev libgtk-3-dev libwayland-dev
+
+      - name: Build the app for aarch64
+        run: |
+          mkdir -p .bin
+          export GO111MODULE=on
+          export GOBIN=$(pwd)/.bin
+          go build -pgo default.pgo -tags wayland -trimpath -ldflags="-s -w" -o $GOBIN/play-timer-aarch64 ./cmd/main.go
+
+      - name: Verify build output for aarch64
+        run: |
+          if [ ! -f .bin/play-timer-aarch64 ]; then
+            echo "Build failed: play-timer-aarch64 binary not found"
+            exit 1
+          fi
