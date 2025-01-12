@@ -1,0 +1,30 @@
+name: Build
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        
+      - name: Build Docker image
+        run: |
+          docker build -t play-timer:latest .
+          
+      - name: Extract binary
+        run: |
+          docker create --name extract play-timer:latest
+          docker cp extract:/app/.bin/play-timer play-timer-x86_64
+          docker rm extract
+          
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: play-timer-x86_64
+          path: play-timer-x86_64
