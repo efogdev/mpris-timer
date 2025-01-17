@@ -250,6 +250,16 @@ func NewSidebar() *adw.NavigationPage {
 func NewContent() *adw.NavigationPage {
 	startBtn = gtk.NewButton()
 
+	startFn := func() {
+		time := core.TimeFromStrings(hrsLabel.Text(), minLabel.Text(), secLabel.Text())
+		seconds := time.Hour()*60*60 + time.Minute()*60 + time.Second()
+		if seconds > 0 {
+			core.Overrides.Duration = seconds
+			saveSize()
+			win.Close()
+		}
+	}
+
 	vBox := gtk.NewBox(gtk.OrientationVertical, 0)
 	hBox := gtk.NewBox(gtk.OrientationHorizontal, 8)
 	content := adw.NewNavigationPage(vBox, "New timer")
@@ -265,9 +275,14 @@ func NewContent() *adw.NavigationPage {
 	titleLabel.SetAlignment(.5)
 	titleLabel.SetSensitive(false)
 
-	rightKeyCtrl := gtk.NewEventControllerKey()
-	rightKeyCtrl.SetPropagationPhase(gtk.PhaseCapture)
-	rightKeyCtrl.ConnectKeyPressed(func(keyval, keycode uint, state gdk.ModifierType) (ok bool) {
+	keyCtrl := gtk.NewEventControllerKey()
+	keyCtrl.SetPropagationPhase(gtk.PhaseCapture)
+	keyCtrl.ConnectKeyPressed(func(keyval, keycode uint, state gdk.ModifierType) (ok bool) {
+		if state == gdk.NoModifierMask && slices.Contains(core.KeyEnter.GdkKeyvals(), keyval) {
+			startFn()
+			return true
+		}
+
 		_, pos, sel := titleLabel.SelectionBounds()
 		if state == gdk.NoModifierMask && initialPreset != nil && !sel {
 			toRight := core.UserPrefs.PresetsOnRight && slices.Contains(core.KeyRight.GdkKeyvals(), keyval) && pos == len(titleLabel.Text())
@@ -281,7 +296,7 @@ func NewContent() *adw.NavigationPage {
 		return false
 	})
 
-	titleLabel.AddController(rightKeyCtrl)
+	titleLabel.AddController(keyCtrl)
 	titleLabel.ConnectChanged(func() {
 		core.Overrides.Title = titleLabel.Text()
 	})
@@ -351,19 +366,6 @@ func NewContent() *adw.NavigationPage {
 	startBtn.SetHExpand(false)
 	startBtn.AddCSSClass("control-btn")
 	startBtn.AddCSSClass("suggested-action")
-
-	startFn := func() {
-		time := core.TimeFromStrings(hrsLabel.Text(), minLabel.Text(), secLabel.Text())
-		seconds := time.Hour()*60*60 + time.Minute()*60 + time.Second()
-		if seconds > 0 {
-			core.Overrides.Duration = seconds
-			saveSize()
-			win.Close()
-			return
-		}
-
-		os.Exit(1)
-	}
 
 	leftKeyCtrl := gtk.NewEventControllerKey()
 	leftKeyCtrl.SetPropagationPhase(gtk.PhaseCapture)
