@@ -30,7 +30,7 @@ func LoadFlags() {
 	flag.BoolVar(&Overrides.UseUI, "ui", false, "Show timepicker UI (default true)")
 	flag.BoolVar(&Overrides.HasShadow, "shadow", UserPrefs.Shadow, "Shadow for progress image")
 	flag.BoolVar(&Overrides.Rounded, "rounded", UserPrefs.Rounded, "Rounded corners")
-	flag.BoolVar(&Overrides.LowFPS, "lowfps", UserPrefs.LowFPS, "Low fps (~3 for KDE, ~15 for GNOME)")
+	flag.BoolVar(&Overrides.LowFPS, "lowfps", UserPrefs.LowFPS, "1 fps mode (energy saver, GNOME only)")
 	flag.IntVar(&Overrides.Duration, "start", 0, "Start the timer immediately, don't show UI (value in seconds)")
 	flag.StringVar(&Overrides.Title, "title", UserPrefs.DefaultTitle, "Name/title of the timer")
 	flag.StringVar(&Overrides.Text, "text", UserPrefs.DefaultText, "Notification text")

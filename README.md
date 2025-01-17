@@ -15,7 +15,8 @@ Notifications included! Utilizing GTK4, Adwaita and MPRIS interface.
 ```shell
 flatpak install flathub io.github.efogdev.mpris-timer
 ```
-...or install `play-timer` from AUR if you are a fellow arch-based distro enjoyer.
+...or install `play-timer` from AUR if you are a fellow arch-based distro enjoyer. 
+[mpris-timer](https://github.com/NixOS/nixpkgs/blob/master/pkgs/by-name/mp/mpris-timer/package.nix) package is avaiable for NixOS.
 
 ## Demo
 ![1](https://github.com/user-attachments/assets/9eab4435-9833-4f39-85e5-9a2f9ec3e75c)
@@ -26,30 +27,32 @@ Use navigation keys (arrows, tab, shift+tab, space, enter) or start inputting nu
 ## CLI use
 
 ```text
--ui
-	Show timepicker UI (default true)
--start int
-	Start the timer immediately, don't show UI (value in seconds)
--title string
-	Name/title of the timer (default "Timer")
--text string
-	Notification text (default "Time is up!")
--color string
-	Progress color (#HEX) for the player, use "default" to use accent color (default "default")
--lowfps
-	Low fps (~3 for KDE, ~15 for GNOME). On Plasma, FPS > 6 causes flickering in the media player widget. Some may experience this even with FPS <= 6 
--notify
-	Send desktop notification (default true)
--rounded
-	Rounded corners (default true)
--shadow
-	Shadow for progress image
--silence int
-	Play this milliseconds of silence before the actual sound — might be helpful for audio devices that wake up not immediately
--sound
-	Play sound (default true)
--volume float
-	Volume [0-1] (default 1)
+	-ui
+    	Show timepicker UI (default true)
+	-start int
+    	Start the timer immediately, don't show UI (value in seconds)
+  -notify
+    	Send desktop notification (default true)
+  -rounded
+    	Rounded corners (default true)
+  -shadow
+    	Shadow for progress image
+	-color string
+    	Progress color (#HEX) for the player, use "default" for the GTK accent color (default "default")
+  -sound
+    	Play sound (default true)
+  -soundfile string
+    	Filename of the custom sound (must be .mp3)
+  -text string
+    	Notification text (default "Time is up!")
+  -title string
+    	Name/title of the timer (default "Timer")
+  -tray
+    	Force tray icon presence (default true)
+  -volume float
+    	Volume [0-1] (default 1)
+  -lowfps
+    	1 fps mode (energy saver, GNOME only)
 ```
 
 ### Examples
@@ -77,7 +80,7 @@ go run cmd/main.go -help
 
 Build:
 ```shell
-go build -tags wayland -o ./.bin/app ./cmd/main.go
+go build -pgo default.pgo -tags wayland -o ./.bin/app ./cmd/main.go
 ```
 > There's a Dockerfile to build easily.
 
