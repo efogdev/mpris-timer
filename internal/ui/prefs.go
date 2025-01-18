@@ -195,6 +195,7 @@ func populateInterfaceGroup(group *adw.PreferencesGroup) {
 	group.Add(titleSwitch)
 	group.Add(showPresetsSwitch)
 	group.Add(presetsOnRightSwitch)
+	group.Add(winSizeSwitch)
 	group.Add(forceTraySwitch)
 }
 
