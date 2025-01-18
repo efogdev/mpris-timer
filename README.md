@@ -27,32 +27,32 @@ Use navigation keys (arrows, tab, shift+tab, space, enter) or start inputting nu
 ## CLI use
 
 ```text
-	-ui
-  		Show timepicker UI (default true)
-	-start int
-    	Start the timer immediately, don't show UI (value in seconds)
-	-notify
-    	Send desktop notification (default true)
-	-rounded
-    	Rounded corners (default true)
-	-shadow
-    	Shadow for progress image
-	-color string
-    	Progress color (#HEX) for the player, use "default" for the GTK accent color (default "default")
-	-sound
-    	Play sound (default true)
-	-soundfile string
-    	Filename of the custom sound (must be .mp3)
-	-text string
-    	Notification text (default "Time is up!")
-	-title string
-    	Name/title of the timer (default "Timer")
-	-tray
-    	Force tray icon presence (default true)
-	-volume float
-    	Volume [0-1] (default 1)
-	-lowfps
-    	1 fps mode (energy saver, GNOME only)
+-ui
+    Show timepicker UI (default true)
+-start int
+    Start the timer immediately, don't show UI (value in seconds)
+-notify
+    Send desktop notification (default true)
+-rounded
+    Rounded corners (default true)
+-shadow
+    Shadow for progress image
+-color string
+    Progress color (#HEX) for the player, use "default" for the GTK accent color (default "default")
+-sound
+    Play sound (default true)
+-soundfile string
+    Filename of the custom sound (must be .mp3)
+-text string
+    Notification text (default "Time is up!")
+-title string
+    Name/title of the timer (default "Timer")
+-tray
+    Force tray icon presence (default true)
+-volume float
+    Volume [0-1] (default 1)
+-lowfps
+    1 fps mode (energy saver, GNOME only)
 ```
 
 ### Examples
