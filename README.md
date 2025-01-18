@@ -28,30 +28,30 @@ Use navigation keys (arrows, tab, shift+tab, space, enter) or start inputting nu
 
 ```text
 	-ui
-    	Show timepicker UI (default true)
+  		Show timepicker UI (default true)
 	-start int
     	Start the timer immediately, don't show UI (value in seconds)
-  -notify
+	-notify
     	Send desktop notification (default true)
-  -rounded
+	-rounded
     	Rounded corners (default true)
-  -shadow
+	-shadow
     	Shadow for progress image
 	-color string
     	Progress color (#HEX) for the player, use "default" for the GTK accent color (default "default")
-  -sound
+	-sound
     	Play sound (default true)
-  -soundfile string
+	-soundfile string
     	Filename of the custom sound (must be .mp3)
-  -text string
+	-text string
     	Notification text (default "Time is up!")
-  -title string
+	-title string
     	Name/title of the timer (default "Timer")
-  -tray
+	-tray
     	Force tray icon presence (default true)
-  -volume float
+	-volume float
     	Volume [0-1] (default 1)
-  -lowfps
+	-lowfps
     	1 fps mode (energy saver, GNOME only)
 ```
 
