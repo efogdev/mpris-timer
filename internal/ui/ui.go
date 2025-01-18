@@ -11,8 +11,11 @@ import (
 	"slices"
 )
 
-//go:embed style.css
+//go:embed style/default.css
 var cssString string
+
+//go:embed style/breeze.css
+var breezeCssString string
 
 //go:embed res/icon.svg
 var icon []byte
@@ -21,10 +24,11 @@ var icon []byte
 var iconPNG []byte
 
 const (
-	minWidth         = 350
-	defaultMinHeight = 195
-	noTitleMinHeight = 170
-	collapseWidth    = 460
+	minWidth          = 350
+	defaultMinHeight  = 195
+	breezeMinHeight   = 165
+	noTitleHeightDiff = 25
+	collapseWidth     = 460
 )
 
 var (
@@ -46,9 +50,13 @@ func Init() {
 			log.Printf("CSS error: %v", err)
 		})
 
-		prov.LoadFromString(cssString)
-		gtk.StyleContextAddProviderForDisplay(gdk.DisplayGetDefault(), prov, gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
+		allCss := cssString
+		if core.BreezeTheme {
+			allCss += breezeCssString
+		}
 
+		prov.LoadFromString(allCss)
+		gtk.StyleContextAddProviderForDisplay(gdk.DisplayGetDefault(), prov, gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
 		NewTimePicker(core.App)
 	})
 
@@ -86,8 +94,15 @@ func NewTimePicker(app *adw.Application) {
 	win.SetContent(handle)
 	win.SetTitle(core.AppName)
 	win.SetSizeRequest(minWidth, getMinHeight())
-	win.SetDefaultSize(int(core.UserPrefs.WindowWidth), int(core.UserPrefs.WindowHeight))
 
+	// ToDo refactor (at least magic numbers)
+	width, height := int(core.UserPrefs.WindowWidth), int(core.UserPrefs.WindowHeight)
+	if core.BreezeTheme && !core.UserPrefs.RememberWinSize {
+		height -= 32
+		width -= 60
+	}
+
+	win.SetDefaultSize(width, height)
 	win.ConnectCloseRequest(func() (ok bool) {
 		saveSize()
 		return false
@@ -114,6 +129,7 @@ func NewTimePicker(app *adw.Application) {
 	body.SetShowSidebar(core.UserPrefs.ShowPresets && len(core.UserPrefs.Presets) > 0)
 	body.SetMinSidebarWidth(40)
 
+	win.AddCSSClass("root")
 	win.SetVisible(true)
 	minLabel.SetText("00")
 	secLabel.SetText("00")
@@ -388,6 +404,7 @@ func NewContent() *adw.NavigationPage {
 	prefsBtnContent.SetIconName("emblem-system-symbolic")
 
 	prefsBtn := gtk.NewButton()
+	prefsBtn.SetTooltipText("Preferences")
 	prefsBtn.SetChild(prefsBtnContent)
 	prefsBtn.AddCSSClass("control-btn")
 	prefsBtn.AddCSSClass("prefs-btn")
@@ -402,6 +419,7 @@ func NewContent() *adw.NavigationPage {
 	closeBtnContent.SetIconName("application-exit-symbolic")
 
 	exitBtn := gtk.NewButton()
+	exitBtn.SetTooltipText("Exit")
 	exitBtn.SetChild(closeBtnContent)
 	exitBtn.AddCSSClass("control-btn")
 	exitBtn.AddCSSClass("prefs-btn")
@@ -428,7 +446,10 @@ func NewContent() *adw.NavigationPage {
 func getMinHeight() int {
 	height := defaultMinHeight
 	if !core.UserPrefs.ShowTitle {
-		height = noTitleMinHeight
+		height -= noTitleHeightDiff
+	}
+	if core.BreezeTheme {
+		height = breezeMinHeight
 	}
 
 	return height

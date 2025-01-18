@@ -2,6 +2,7 @@ package core
 
 import (
 	"github.com/diamondburned/gotk4/pkg/glib/v2"
+	"github.com/efogdev/gotk4-adwaita/pkg/adw"
 	"log"
 	"math"
 	"os"
@@ -38,11 +39,12 @@ const svgTemplate = `
 </svg>`
 
 var (
-	IsPlasma bool
-	IsGnome  bool
-	CacheDir string
-	DataDir  string
-	svgTpl   *template.Template
+	IsPlasma    bool
+	IsGnome     bool
+	BreezeTheme bool
+	CacheDir    string
+	DataDir     string
+	svgTpl      *template.Template
 )
 
 type svgParams struct {
@@ -66,6 +68,17 @@ type svgParams struct {
 func init() {
 	IsPlasma = strings.ToUpper(os.Getenv("XDG_CURRENT_DESKTOP")) == "KDE"
 	IsGnome = strings.ToUpper(os.Getenv("XDG_CURRENT_DESKTOP")) == "GNOME"
+
+	ignoreKdeTheme := strings.ToUpper(os.Getenv("PLAY_TIMER_IGNORE_KDE_THEME")) != ""
+	if IsPlasma && !ignoreKdeTheme {
+		BreezeTheme = true
+
+		if adw.StyleManagerGetDefault().Dark() {
+			_ = os.Setenv("GTK_THEME", "Breeze:dark")
+		} else {
+			_ = os.Setenv("GTK_THEME", "Breeze:light")
+		}
+	}
 
 	var err error
 	svgTpl, err = tpl.Parse(svgTemplate)

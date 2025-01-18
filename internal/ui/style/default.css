@@ -70,14 +70,12 @@
 	padding: 0 8px;
 }
 
-/* huh? */
-.presets-list-title > * > * {
+.presets-list-title > stack > label {
 	background: transparent;
 	padding: 12px 0;
 }
 
-/* cmon go find the classname */
-.presets-list > * {
+.presets-list > row {
 	padding: 0;
 }
 
