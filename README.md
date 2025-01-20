@@ -25,6 +25,13 @@ flatpak install flathub io.github.efogdev.mpris-timer
 Play Timer aims to be as keyboard friendly as possible. \
 Use navigation keys (arrows, tab, shift+tab, space, enter) or start inputting numbers right away.
 
+### KDE Plasma 
+By default, Play Timer will use Breeze GTK4 theme with adjustments on Plasma. \
+In case you prefer the original Adwaita look, set `PLAY_TIMER_IGNORE_KDE_THEME` environment variable to any non-empty value.
+
+![image](https://github.com/user-attachments/assets/cc3f936e-c22f-4eb8-be7d-0c11e6b2228a)
+
+
 ## CLI use
 
 ```text
@@ -56,13 +63,13 @@ Use navigation keys (arrows, tab, shift+tab, space, enter) or start inputting nu
     1 fps mode (energy saver, GNOME only)
 ```
 
-### Examples
+#### Examples
 
 ```shell
 # show UI for a red "Oven" timer
 play-timer -title Oven -color "#FF4200"  
 
-# start a 120s "Tea" timer immediately
+# start a silent 120s "Tea" timer immediately
 play-timer -title Tea -rounded=0 -sound=0 -start 120
 ```
 
@@ -94,9 +101,3 @@ flatpak run org.flatpak.Builder --force-clean --sandbox --user --install --insta
 
 [@Tuba2](https://github.com/Tuba2) — app name and icon \
 [@efogdev](https://github.com/efogdev) — oh wait that's me
-
-## Roadmap
-
-1) Progress styles
-2) Presets drag&drop in prefs
-3) Better non-GNOME support
