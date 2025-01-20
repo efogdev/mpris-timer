@@ -16,8 +16,8 @@ Notifications included! Utilizing GTK4, Adwaita and MPRIS interface.
 flatpak install flathub io.github.efogdev.mpris-timer
 ```
 
->AUR: `play-timer` \
->NixOS: [mpris-timer](https://github.com/NixOS/nixpkgs/blob/master/pkgs/by-name/mp/mpris-timer/package.nix) 
+AUR: `play-timer` \
+NixOS: [mpris-timer](https://github.com/NixOS/nixpkgs/blob/master/pkgs/by-name/mp/mpris-timer/package.nix) 
 
 ## Demo
 ![1](https://github.com/user-attachments/assets/9eab4435-9833-4f39-85e5-9a2f9ec3e75c)
