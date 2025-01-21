@@ -56,7 +56,7 @@ In case you prefer the original Adwaita look, set `PLAY_TIMER_IGNORE_KDE_THEME` 
 -title string
     Name/title of the timer (default "Timer")
 -tray
-    Force tray icon presence (default true)
+    Force tray icon presence (default false)
 -volume float
     Volume [0-1] (default 1)
 -lowfps
