@@ -1,11 +1,12 @@
 package ui
 
 import (
-	"github.com/diamondburned/gotk4/pkg/gdk/v4"
-	"github.com/diamondburned/gotk4/pkg/gtk/v4"
 	"log"
 	"mpris-timer/internal/core"
 	"time"
+
+	"github.com/diamondburned/gotk4/pkg/gdk/v4"
+	"github.com/diamondburned/gotk4/pkg/gtk/v4"
 )
 
 // ToDo: investigate
