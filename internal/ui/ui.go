@@ -45,8 +45,6 @@ var (
 )
 
 func Init() {
-	gtk.Init()
-
 	core.App.ConnectActivate(func() {
 		prov := gtk.NewCSSProvider()
 		prov.ConnectParsingError(func(sec *gtk.CSSSection, err error) {

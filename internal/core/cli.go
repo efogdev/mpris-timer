@@ -2,8 +2,9 @@ package core
 
 import (
 	"flag"
-	"github.com/efogdev/gotk4-adwaita/pkg/adw"
 	"log"
+
+	"github.com/efogdev/gotk4-adwaita/pkg/adw"
 )
 
 var Overrides = struct {
