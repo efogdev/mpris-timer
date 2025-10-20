@@ -12,6 +12,12 @@
 	<summary>Native-feeling timers</summary>
 	<content_rating type="oars-1.1" />
 	<releases>
+		<release date="2025-10-20" version="v2.2.2">
+			<description>
+				<p>Play Timer 2.2.2: second try on hotfix of crashes</p>
+			</description>
+		</release>
+		
 		<release date="2025-10-20" version="v2.2.1">
 			<description>
 				<p>Play Timer 2.2.1: hotfix of crashes</p>

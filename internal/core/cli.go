@@ -2,9 +2,6 @@ package core
 
 import (
 	"flag"
-	"log"
-
-	"github.com/efogdev/gotk4-adwaita/pkg/adw"
 )
 
 var Overrides = struct {
@@ -38,9 +35,4 @@ func LoadFlags() {
 	flag.StringVar(&Overrides.Color, "color", UserPrefs.ProgressColor, "Progress color (#HEX) for the player, use \"default\" for the GTK accent color")
 	flag.BoolVar(&Overrides.ForceTrayIcon, "tray", UserPrefs.ForceTrayIcon, "Force tray icon presence")
 	flag.Parse()
-
-	if Overrides.Color == "default" {
-		Overrides.Color = HexFromRGBA(adw.StyleManagerGetDefault().AccentColorRGBA())
-		log.Printf("using gtk accent color: %s", Overrides.Color)
-	}
 }
