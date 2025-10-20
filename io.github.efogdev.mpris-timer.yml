@@ -1,6 +1,6 @@
 id: io.github.efogdev.mpris-timer
 runtime: org.gnome.Platform
-runtime-version: "47"
+runtime-version: "49"
 sdk: org.gnome.Sdk
 command: play-timer
 
@@ -22,7 +22,7 @@ modules:
   - name: play-timer
     buildsystem: simple
     build-options:
-      append-path: /usr/lib/sdk/golang/bin
+      prepend-path: /usr/lib/sdk/golang/bin
       env:
         GOBIN: /app/bin
         GOROOT: /usr/lib/sdk/golang
@@ -36,9 +36,9 @@ modules:
       - install -Dm644 misc/$FLATPAK_ID.gschema.xml $FLATPAK_DEST/share/glib-2.0/schemas/$FLATPAK_ID.gschema.xml
       - glib-compile-schemas $FLATPAK_DEST/share/glib-2.0/schemas
     sources:
-      - type: dir
-        path: .
-#      - type: git
-#        url: https://github.com/efogdev/mpris-timer
-#        tag: 2.0.6
+#      - type: dir
+#        path: .
+      - type: git
+        url: https://github.com/efogdev/mpris-timer
+        tag: 2.2.0
       - go.mod.yml
